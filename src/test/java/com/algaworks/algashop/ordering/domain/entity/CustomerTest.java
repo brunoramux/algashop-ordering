@@ -1,13 +1,11 @@
 package com.algaworks.algashop.ordering.domain.entity;
 
 import com.algaworks.algashop.ordering.domain.exception.CustomerArchivedException;
-import com.algaworks.algashop.ordering.domain.utility.UUIDGenerator;
 import com.algaworks.algashop.ordering.domain.valueobject.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 
 class CustomerTest {
 
@@ -16,32 +14,16 @@ class CustomerTest {
 
         Assertions.assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> {
-                    new Customer(
-                            new CustomerId(UUIDGenerator.generateTimeBasedUUID()),
-                            new BirthDate(LocalDate.of(1990, 10, 30)),
-                            new FullName("John", "Doe"),
-                            true,
-                            new Document("12345678900"),
-                            new Phone("555-1234"),
-                            new Email("invalid-email"),
-                            OffsetDateTime.now()
-                    );
+                    CustomerTestDataBuilder.brandNewCustomer()
+                            .email(new Email("invalid-email"))
+                            .build();
                 });
     }
 
     @Test
     void given_invalidEmail_whenTryUpdateCustomerEmail_ShouldGenerateException(){
 
-        Customer customer = new Customer(
-                new CustomerId(UUIDGenerator.generateTimeBasedUUID()),
-                new BirthDate(LocalDate.of(1990, 10, 30)),
-                new FullName("John", "Doe"),
-                true,
-                new Document("12345678900"),
-                new Phone("555-1234"),
-                new Email("john-doe@email.com"),
-                OffsetDateTime.now()
-        );
+        Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
 
         Assertions.assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> {
@@ -52,16 +34,7 @@ class CustomerTest {
 
     @Test
     void given_unarchivedCustomer_whenArchive_shouldAnonymize(){
-        Customer customer = new Customer(
-                new CustomerId(UUIDGenerator.generateTimeBasedUUID()),
-                new BirthDate(LocalDate.of(1990, 10, 30)),
-                new FullName("John", "Doe"),
-                true,
-                new Document("12345678900"),
-                new Phone("555-1234"),
-                new Email("john-doe@email.com"),
-                OffsetDateTime.now()
-        );
+        Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
 
         customer.archive();
 
@@ -72,22 +45,24 @@ class CustomerTest {
                 c -> Assertions.assertThat(c.phone()).isEqualTo(new Phone("000-000-0000")),
                 c -> Assertions.assertThat(c.document()).isEqualTo(new Document("000-00-0000")),
                 c -> Assertions.assertThat(c.birthDate()).isNull(),
-                c -> Assertions.assertThat(c.isPromotionNotificationsAllowed()).isFalse()
+                c -> Assertions.assertThat(c.isPromotionNotificationsAllowed()).isFalse(),
+                c -> Assertions.assertThat(c.address()).isEqualTo(
+                        Address.builder()
+                                .street("SQN 403")
+                                .number("Anonymous")
+                                .complement(null)
+                                .neighborhood("Asa Norte")
+                                .city("Brasilia")
+                                .state("DF")
+                                .zipCode(new ZipCode("70763-540"))
+                                .build()
+                )
                 );
     }
 
     @Test
     void given_archivedCustomer_whenTryArchive_ShouldThrowException(){
-        Customer customer = new Customer(
-                new CustomerId(UUIDGenerator.generateTimeBasedUUID()),
-                new BirthDate(LocalDate.of(1990, 10, 30)),
-                new FullName("John", "Doe"),
-                true,
-                new Document("12345678900"),
-                new Phone("555-1234"),
-                new Email("john-doe@email.com"),
-                OffsetDateTime.now()
-        );
+        Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
 
         customer.archive();
 
@@ -97,16 +72,7 @@ class CustomerTest {
 
     @Test
     void given_archivedCustomer_whenTryUpdate_ShouldThrowException(){
-        Customer customer = new Customer(
-                new CustomerId(UUIDGenerator.generateTimeBasedUUID()),
-                new BirthDate(LocalDate.of(1990, 10, 30)),
-                new FullName("John", "Doe"),
-                true,
-                new Document("12345678900"),
-                new Phone("555-1234"),
-                new Email("john-doe@email.com"),
-                OffsetDateTime.now()
-        );
+        Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
 
         customer.archive();
 
@@ -134,16 +100,7 @@ class CustomerTest {
 
     @Test
     void given_newCustomer_whenAddLoyaltyPoints_ShouldSumPoints(){
-        Customer customer = new Customer(
-                new CustomerId(UUIDGenerator.generateTimeBasedUUID()),
-                new BirthDate(LocalDate.of(1990, 10, 30)),
-                new FullName("John", "Doe"),
-                true,
-                new Document("12345678900"),
-                new Phone("555-1234"),
-                new Email("john-doe@email.com"),
-                OffsetDateTime.now()
-        );
+        Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
 
         customer.addLoyaltyPoint(10);
         customer.addLoyaltyPoint(35);
@@ -153,16 +110,23 @@ class CustomerTest {
 
     @Test
     void given_newCustomer_whenAddNegativeLoyaltyPoints_ShouldSumPoints(){
-        Customer customer = new Customer(
-                new CustomerId(UUIDGenerator.generateTimeBasedUUID()),
-                new BirthDate(LocalDate.of(1990, 10, 30)),
-                new FullName("John", "Doe"),
-                true,
-                new Document("12345678900"),
-                new Phone("555-1234"),
-                new Email("john-doe@email.com"),
-                OffsetDateTime.now()
-        );
+        Customer customer = Customer.brandNew()
+                .fullName(new FullName("John", "Doe"))
+                .birthDate(new BirthDate(LocalDate.of(1990, 10, 30)))
+                .promotionNotificationsAllowed(true)
+                .document(new Document("12345678900"))
+                .phone(new Phone("555-1234"))
+                .email(new Email("john-doe@email.com"))
+                .address(Address.builder()
+                        .street("SQN 403")
+                        .number("301")
+                        .complement("Bloco G Apto 301")
+                        .neighborhood("Asa Norte")
+                        .city("Brasilia")
+                        .state("DF")
+                        .zipCode(new ZipCode("70763-540"))
+                        .build())
+                .build();
 
         Assertions.assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> {
