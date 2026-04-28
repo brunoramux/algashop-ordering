@@ -1,6 +1,5 @@
-package com.algaworks.algashop.ordering.domain.entity.valueobject;
+package com.algaworks.algashop.ordering.domain.valueobject;
 
-import com.algaworks.algashop.ordering.domain.valueobject.BirthDate;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

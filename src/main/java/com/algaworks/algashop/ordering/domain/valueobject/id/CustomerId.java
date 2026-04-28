@@ -1,4 +1,4 @@
-package com.algaworks.algashop.ordering.domain.valueobject;
+package com.algaworks.algashop.ordering.domain.valueobject.id;
 
 import com.algaworks.algashop.ordering.domain.utility.UUIDGenerator;
 
@@ -11,9 +11,8 @@ public record CustomerId(UUID value) {
        this(UUIDGenerator.generateTimeBasedUUID());
     }
 
-    public CustomerId(UUID value){
+    public CustomerId{
         Objects.requireNonNull(value, "CustomerId cannot be null");
-        this.value = value;
     }
 
     @Override
