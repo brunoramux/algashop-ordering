@@ -8,6 +8,7 @@ import com.algaworks.algashop.ordering.domain.valueobject.id.OrderItemId;
 import com.algaworks.algashop.ordering.domain.valueobject.id.ProductId;
 import lombok.Builder;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 public class OrderItem {
@@ -66,7 +67,7 @@ public class OrderItem {
     @Builder(builderClassName = "BrandNewOrderItemBuilder", builderMethodName = "brandNew")
     private static OrderItem createBrandNew(OrderId orderId, ProductId productId, ProductName productName,
                                      Money price, Quantity quantity) {
-        return new OrderItem(
+        OrderItem orderItem = new OrderItem(
                 new OrderItemId(),
                 orderId,
                 productId,
@@ -75,7 +76,15 @@ public class OrderItem {
                 quantity,
                 Money.ZERO
         );
+        orderItem.recalculateTotals();
 
+        return orderItem;
+    }
+
+    private void recalculateTotals(){
+        BigDecimal totalAmount = this.price().multiply(this.quantity()).value();
+
+        this.setTotalAmount(new Money(totalAmount));
     }
 
     private void setId(OrderItemId id) {

@@ -9,4 +9,6 @@ public class ErrorMessages {
 
     public static final String ERROR_CUSTOMER_ARCHIVED = "Customer is archived. Cannot be changed";
 
+    public static final String ERROR_ORDER_STATUS_CANNOT_BE_CHANGED = "Cannot change order %s from %s to %s.";
+
 }

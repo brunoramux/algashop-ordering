@@ -7,9 +7,6 @@ import com.algaworks.algashop.ordering.domain.valueobject.id.OrderId;
 import com.algaworks.algashop.ordering.domain.valueobject.id.ProductId;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class OrderItemTest {
 
