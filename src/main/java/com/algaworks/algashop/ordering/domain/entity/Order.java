@@ -1,5 +1,7 @@
 package com.algaworks.algashop.ordering.domain.entity;
 
+import com.algaworks.algashop.ordering.domain.exception.OrderCannotBePlacedException;
+import com.algaworks.algashop.ordering.domain.exception.OrderInvalidShippingDeliveryDateException;
 import com.algaworks.algashop.ordering.domain.exception.OrderStatusCannotBeChangedException;
 import com.algaworks.algashop.ordering.domain.valueobject.*;
 import com.algaworks.algashop.ordering.domain.valueobject.id.CustomerId;
@@ -98,16 +100,39 @@ public class Order {
     }
 
     public void place(){
+        this.verifyIfCanChangeToPlaced();
+
+        this.setPlacedAt(OffsetDateTime.now());
         this.changeStatus(OrderStatus.PLACED);
     }
 
-    private void changeStatus(OrderStatus newStatus) {
-        Objects.requireNonNull(newStatus);
-        if(this.status().canNotChangeTo(newStatus)) {
-            throw new OrderStatusCannotBeChangedException(this.id(), this.status(), newStatus);
+    public void markAsPaid() {
+        this.setPaidAt(OffsetDateTime.now());
+        this.changeStatus(OrderStatus.PAID);
+    }
+
+    public void changePaymentMethod(PaymentMethod paymentMethod){
+        Objects.requireNonNull(paymentMethod);
+        this.setPaymentMethod(paymentMethod);
+    }
+
+    public void changeBillingInfo(BillingInfo billingInfo){
+        Objects.requireNonNull(billingInfo);
+        this.setBilling(billingInfo);
+    }
+
+    public void changeShippingInfo(ShippingInfo shippingInfo, Money shippingCost, LocalDate expectedDeliveryDate){
+        Objects.requireNonNull(shippingInfo);
+        Objects.requireNonNull(shippingCost);
+        Objects.requireNonNull(expectedDeliveryDate);
+
+        if(expectedDeliveryDate.isBefore(LocalDate.now())) {
+            throw new OrderInvalidShippingDeliveryDateException(this.id());
         }
 
-        this.setStatus(newStatus);
+        this.setShipping(shippingInfo);
+        this.setShippingCost(shippingCost);
+        this.setExpectedDeliveryDate(expectedDeliveryDate);
     }
 
     public boolean isDraft(){
@@ -118,25 +143,8 @@ public class Order {
         return this.status().equals(OrderStatus.PLACED);
     }
 
-    private void recalculateTotals() {
-        BigDecimal totalItemsAmount = this.items().stream().map(i -> i.totalAmount().value())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-
-        Integer totalItemsQuantity = this.items().stream().map(i -> i.quantity().value())
-                .reduce(0, Integer::sum);
-
-        BigDecimal shippingCost;
-        if(this.shippingCost() == null){
-            shippingCost = BigDecimal.ZERO;
-        } else {
-            shippingCost = this.shippingCost.value();
-        }
-
-        BigDecimal totalAmount = totalItemsAmount.add(shippingCost);
-
-        this.setTotalAmount(new Money(totalAmount));
-        this.setTotalItems(new Quantity(totalItemsQuantity));
+    public boolean isPaid(){
+        return this.status().equals(OrderStatus.PAID);
     }
 
     public OrderId id() {
@@ -265,6 +273,54 @@ public class Order {
         this.items = items;
     }
 
+    private void changeStatus(OrderStatus newStatus) {
+        Objects.requireNonNull(newStatus);
+        if(this.status().canNotChangeTo(newStatus)) {
+            throw new OrderStatusCannotBeChangedException(this.id(), this.status(), newStatus);
+        }
+
+        this.setStatus(newStatus);
+    }
+
+    private void recalculateTotals() {
+        BigDecimal totalItemsAmount = this.items().stream().map(i -> i.totalAmount().value())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+
+        Integer totalItemsQuantity = this.items().stream().map(i -> i.quantity().value())
+                .reduce(0, Integer::sum);
+
+        BigDecimal shippingCost;
+        if(this.shippingCost() == null){
+            shippingCost = BigDecimal.ZERO;
+        } else {
+            shippingCost = this.shippingCost.value();
+        }
+
+        BigDecimal totalAmount = totalItemsAmount.add(shippingCost);
+
+        this.setTotalAmount(new Money(totalAmount));
+        this.setTotalItems(new Quantity(totalItemsQuantity));
+    }
+
+    private void verifyIfCanChangeToPlaced() {
+        if(this.shipping() == null){
+            throw OrderCannotBePlacedException.noShippingInfo(this.id());
+        }
+        if(this.shippingCost() == null){
+            throw OrderCannotBePlacedException.noShippingInfo(this.id());
+        }
+        if(this.billing() == null){
+            throw OrderCannotBePlacedException.noBillingInfo(this.id());
+        }
+        if(this.expectedDeliveryDate() == null){
+            throw OrderCannotBePlacedException.noExpectedDeliveryDate(this.id());
+        }
+        if(this.paymentMethod() == null){
+            throw OrderCannotBePlacedException.noPaymentMethod(this.id());
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -276,4 +332,6 @@ public class Order {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
+
 }

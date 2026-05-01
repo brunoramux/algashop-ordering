@@ -11,4 +11,12 @@ public class ErrorMessages {
 
     public static final String ERROR_ORDER_STATUS_CANNOT_BE_CHANGED = "Cannot change order %s from %s to %s.";
 
+    public static final String ERROR_ORDER_INVALID_SHIPPING_DELIVERY_DATE = "Delivery date for order %s cannot be in the past.";
+
+    public static final String ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_SHIPPING_INFO = "Order %s cannot be placed. Shipping info is missing.";
+    public static final String ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_SHIPPING_COST = "Order %s cannot be placed. Shipping cost is missing.";
+    public static final String ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_BILLING_INFO = "Order %s cannot be placed. Billing info is missing.";
+    public static final String ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_EXPECTED_DELIVERY_DATE = "Order %s cannot be placed. Expected delivery date is missing.";
+    public static final String ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_PAYMENT_METHOD = "Order %s cannot be placed. Payment method is missing.";
+
 }
