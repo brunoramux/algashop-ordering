@@ -105,6 +105,16 @@ public class OrderTestDataBuilder {
                 .expectedDate(LocalDate.now().plusWeeks(2));
     }
 
+    public static Billing aBilling(){
+        return Billing.builder()
+                .address(anAddress())
+                .document(new Document("225-09-1992"))
+                .phone(new Phone("123-123-123"))
+                .email(new Email("bruno.lemos@live.com"))
+                .fullName(new FullName("Bruno", "Ramos Lemos"))
+                .build();
+    }
+
     public OrderTestDataBuilder customerId(CustomerId customerId) {
         this.customerId = customerId;
         return this;
