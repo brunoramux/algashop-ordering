@@ -20,4 +20,7 @@ public class ErrorMessages {
     public static final String ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_PAYMENT_METHOD = "Order %s cannot be placed. Payment method is missing.";
 
     public static final String ERROR_ORDER_DOES_NOT_CONTAIN_ORDER_ITEM = "Order %s does not contain Order Item whit ID %s";
+
+    public static final String ERROR_PRODUCT_OUT_OF_STOCK = "Product ID %s is out of stock.";
+
 }
