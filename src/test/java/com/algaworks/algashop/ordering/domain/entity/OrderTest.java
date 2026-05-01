@@ -149,4 +149,26 @@ class OrderTest {
                 .isThrownBy(()-> order.changeShippingInfo(shippingInfo, shippingCost, expectedDeliveryDate));
     }
 
+    @Test
+    void whenChangeOrderItemQuantity_shouldRecalculateTotal(){
+        Order order = Order.draft(new CustomerId());
+
+        order.addItem(
+                new ProductId(),
+                new ProductName("IPhone"),
+                new Money("10.00"),
+                new Quantity(3)
+        );
+
+        Assertions.assertThat(order.totalItems().value()).isEqualTo(3);
+        Assertions.assertThat(order.totalAmount()).isEqualTo(new Money("30.00"));
+
+        OrderItem orderItem = order.items().iterator().next();
+
+        order.changeItemQuantity(orderItem.id(), new Quantity(5));
+
+        Assertions.assertThat(order.totalItems().value()).isEqualTo(5);
+        Assertions.assertThat(order.totalAmount()).isEqualTo(new Money("50.00"));
+    }
+
 }

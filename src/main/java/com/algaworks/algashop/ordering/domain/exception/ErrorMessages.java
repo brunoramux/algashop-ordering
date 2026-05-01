@@ -19,4 +19,5 @@ public class ErrorMessages {
     public static final String ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_EXPECTED_DELIVERY_DATE = "Order %s cannot be placed. Expected delivery date is missing.";
     public static final String ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_PAYMENT_METHOD = "Order %s cannot be placed. Payment method is missing.";
 
+    public static final String ERROR_ORDER_DOES_NOT_CONTAIN_ORDER_ITEM = "Order %s does not contain Order Item whit ID %s";
 }
