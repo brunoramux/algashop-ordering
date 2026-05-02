@@ -80,6 +80,14 @@ public class ShoppingCart {
         this.items.add(shoppingCartItem);
     }
 
+    public void removeItem(ShoppingCartItemId shoppingCartItemId) {
+        Objects.requireNonNull(shoppingCartItemId);
+        ShoppingCartItem shoppingCartItem = findItem(shoppingCartItemId);
+        this.items.remove(shoppingCartItem);
+
+        this.recalculateTotals();
+    }
+
     public void refreshItem(Product product){
         ShoppingCartItem shoppingCartItem = this.findItem(product.id());
         shoppingCartItem.refresh(product);
