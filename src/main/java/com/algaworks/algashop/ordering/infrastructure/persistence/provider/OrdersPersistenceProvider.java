@@ -1,0 +1,51 @@
+package com.algaworks.algashop.ordering.infrastructure.persistence.provider;
+
+import com.algaworks.algashop.ordering.domain.model.entity.Order;
+import com.algaworks.algashop.ordering.domain.model.entity.OrderStatus;
+import com.algaworks.algashop.ordering.domain.model.entity.PaymentMethod;
+import com.algaworks.algashop.ordering.domain.model.repository.Orders;
+import com.algaworks.algashop.ordering.domain.model.valueobject.Money;
+import com.algaworks.algashop.ordering.domain.model.valueobject.Quantity;
+import com.algaworks.algashop.ordering.domain.model.valueobject.id.CustomerId;
+import com.algaworks.algashop.ordering.domain.model.valueobject.id.OrderId;
+import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.OrderPersistenceEntityAssembler;
+import com.algaworks.algashop.ordering.infrastructure.persistence.disassembler.OrderPersistenceEntityDisassembler;
+import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
+import com.algaworks.algashop.ordering.infrastructure.persistence.repository.OrderPersistenceEntityRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.util.Optional;
+
+@Component
+@RequiredArgsConstructor
+public class OrdersPersistenceProvider implements Orders {
+
+    private final OrderPersistenceEntityRepository repository;
+    private final OrderPersistenceEntityAssembler assembler;
+    private final OrderPersistenceEntityDisassembler disassembler;
+
+    @Override
+    public Optional<Order> ofId(OrderId orderId) {
+        Optional<OrderPersistenceEntity> persistenceEntity = repository.findById(orderId.value().toLong());
+
+        return persistenceEntity.map(disassembler::toDomainEntity);
+    }
+
+    @Override
+    public boolean exists(OrderId orderId) {
+        return false;
+    }
+
+    @Override
+    public void add(Order aggregateRoot) {
+        OrderPersistenceEntity orderToPersist = assembler.fromDomain(aggregateRoot);
+
+        repository.saveAndFlush(orderToPersist);
+    }
+
+    @Override
+    public int count() {
+        return 0;
+    }
+}
