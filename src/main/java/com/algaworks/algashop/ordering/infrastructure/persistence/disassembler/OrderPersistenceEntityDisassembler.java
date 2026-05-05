@@ -18,6 +18,7 @@ public class OrderPersistenceEntityDisassembler {
     public Order toDomainEntity(OrderPersistenceEntity persistenceEntity) {
         return Order.existing()
                 .id(new OrderId(persistenceEntity.getId()))
+                .version(persistenceEntity.getVersion())
                 .customerId(new CustomerId(persistenceEntity.getCustomerId()))
                 .totalAmount(new Money(persistenceEntity.getTotalAmount()))
                 .totalItems(new Quantity(persistenceEntity.getTotalItems()))

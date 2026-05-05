@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import java.util.Optional;
 
@@ -44,5 +45,43 @@ class OrdersIT {
                 s -> Assertions.assertThat(s.customerId()).isEqualTo(order.customerId()),
                 s -> Assertions.assertThat(s.totalAmount()).isEqualTo(order.totalAmount())
         );
+    }
+
+    @Test
+    void shouldUpdateExistingOrder(){
+        Order order = OrderTestDataBuilder.anOrder().orderStatus(OrderStatus.DRAFT).build();
+        order.place();
+
+        orders.add(order);
+
+        order = orders.ofId(order.id()).orElseThrow();
+
+        order.markAsPaid();
+
+        orders.add(order);
+
+        order = orders.ofId(order.id()).orElseThrow();
+
+        Assertions.assertThat(order.status()).isEqualTo(OrderStatus.PAID);
+    }
+
+    @Test
+    void shouldNotAllowStaleUpdates(){
+        Order order = OrderTestDataBuilder.anOrder().orderStatus(OrderStatus.PLACED).build();
+        orders.add(order);
+
+        Order order1 = orders.ofId(order.id()).orElseThrow();
+        Order order2 = orders.ofId(order.id()).orElseThrow();
+
+        order1.markAsPaid();
+        orders.add(order1);
+
+        // Mesma Order acabou de ser alterada no Banco de Dados, portanto a instância local está desatualizada (STALE)
+        order2.cancel();
+
+        // Alteração não deve ser permitida
+        Assertions.assertThatExceptionOfType(ObjectOptimisticLockingFailureException.class)
+                .isThrownBy(() -> orders.add(order2));
+
     }
 }

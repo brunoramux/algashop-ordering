@@ -13,6 +13,7 @@ public class OrderPersistenceEntityAssembler {
 
     public OrderPersistenceEntity merge(OrderPersistenceEntity orderPersistenceEntity, Order order) {
         orderPersistenceEntity.setId(order.id().value().toLong());
+        orderPersistenceEntity.setVersion(order.version());
         orderPersistenceEntity.setCustomerId(order.customerId().value());
         orderPersistenceEntity.setTotalAmount(order.totalAmount().value());
         orderPersistenceEntity.setTotalItems(order.totalItems().value());
