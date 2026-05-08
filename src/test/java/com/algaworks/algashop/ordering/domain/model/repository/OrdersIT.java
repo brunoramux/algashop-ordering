@@ -30,7 +30,6 @@ class OrdersIT {
     @Test
     public void shouldPersistAndFind(){
         Order order = OrderTestDataBuilder.anOrder()
-                .orderStatus(OrderStatus.DRAFT)
                 .build();
         orders.add(order);
 
@@ -49,7 +48,7 @@ class OrdersIT {
 
     @Test
     void shouldUpdateExistingOrder(){
-        Order order = OrderTestDataBuilder.anOrder().orderStatus(OrderStatus.DRAFT).build();
+        Order order = OrderTestDataBuilder.anOrder().build();
         order.place();
 
         orders.add(order);

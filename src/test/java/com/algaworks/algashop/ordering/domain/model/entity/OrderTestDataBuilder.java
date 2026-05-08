@@ -17,7 +17,7 @@ public class OrderTestDataBuilder {
 
     private boolean withItems;
 
-    private OrderStatus orderStatus;
+    private OrderStatus orderStatus = OrderStatus.DRAFT;
 
 
     private OrderTestDataBuilder() {}
@@ -33,7 +33,7 @@ public class OrderTestDataBuilder {
 
         order.changePaymentMethod(paymentMethod);
 
-        if(!withItems) {
+        if(withItems) {
             order.addItem(ProductTestDataBuilder.aProduct().build(), new Quantity(2));
             order.addItem(ProductTestDataBuilder.aProductMacBook().build(), new Quantity(1));
         }

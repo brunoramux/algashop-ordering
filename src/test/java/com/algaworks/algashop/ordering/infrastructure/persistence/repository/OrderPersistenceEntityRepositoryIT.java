@@ -2,7 +2,10 @@ package com.algaworks.algashop.ordering.infrastructure.persistence.repository;
 
 import com.algaworks.algashop.ordering.domain.model.utility.TSIDGenerator;
 import com.algaworks.algashop.ordering.domain.model.utility.UUIDGenerator;
+import com.algaworks.algashop.ordering.domain.model.valueobject.id.OrderItemId;
+import com.algaworks.algashop.ordering.infrastructure.persistence.OrderPersistenceEntityTestDataBuilder;
 import com.algaworks.algashop.ordering.infrastructure.persistence.config.SpringDataAuditingConfig;
+import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import org.assertj.core.api.Assert;
 import org.assertj.core.api.Assertions;
@@ -14,6 +17,8 @@ import org.springframework.context.annotation.Import;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.Set;
+import java.util.UUID;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -29,19 +34,15 @@ class OrderPersistenceEntityRepositoryIT {
 
     @Test
     public void shouldPersistOrder() {
-        long orderId = TSIDGenerator.generateTSID().toLong();
-        OrderPersistenceEntity order = OrderPersistenceEntity.builder()
-                .id(orderId)
-                .customerId(UUIDGenerator.generateTimeBasedUUID())
-                .totalItems(2)
-                .totalAmount(new BigDecimal(1000))
-                .status("DRAFT")
-                .paymentMethod("CREDIT_CARD")
-                .placedAt(OffsetDateTime.now())
-                .build();
+        OrderPersistenceEntity order = OrderPersistenceEntityTestDataBuilder.existingOrder().build();
 
         repository.saveAndFlush(order);
-        Assertions.assertThat(repository.existsById(orderId)).isTrue();
+
+        OrderPersistenceEntity orderPersisted = repository.findById(order.getId()).orElseThrow();
+        Assertions.assertThat(repository.existsById(order.getId())).isTrue();
+        Assertions.assertThat(orderPersisted.getId()).isEqualTo(order.getId());
+        Assertions.assertThat(orderPersisted.getItems()).isNotNull();
+
     }
 
     @Test
