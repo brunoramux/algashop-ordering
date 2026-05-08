@@ -2,12 +2,9 @@ package com.algaworks.algashop.ordering.infrastructure.persistence.repository;
 
 import com.algaworks.algashop.ordering.domain.model.utility.TSIDGenerator;
 import com.algaworks.algashop.ordering.domain.model.utility.UUIDGenerator;
-import com.algaworks.algashop.ordering.domain.model.valueobject.id.OrderItemId;
-import com.algaworks.algashop.ordering.infrastructure.persistence.OrderPersistenceEntityTestDataBuilder;
+import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntityTestDataBuilder;
 import com.algaworks.algashop.ordering.infrastructure.persistence.config.SpringDataAuditingConfig;
-import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
-import org.assertj.core.api.Assert;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +14,6 @@ import org.springframework.context.annotation.Import;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.Set;
-import java.util.UUID;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
