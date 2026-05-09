@@ -1,5 +1,7 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.repository;
 
+import com.algaworks.algashop.ordering.domain.model.entity.Order;
+import com.algaworks.algashop.ordering.domain.model.entity.OrderTestDataBuilder;
 import com.algaworks.algashop.ordering.domain.model.utility.TSIDGenerator;
 import com.algaworks.algashop.ordering.domain.model.utility.UUIDGenerator;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntityTestDataBuilder;
@@ -64,5 +66,7 @@ class OrderPersistenceEntityRepositoryIT {
         Assertions.assertThat(orderPersistenceEntity.getCreatedByUserId()).isNotNull();
         Assertions.assertThat(orderPersistenceEntity.getLastModifiedAt()).isNotNull();
     }
+
+
 
 }

@@ -3,6 +3,7 @@ package com.algaworks.algashop.ordering.domain.model.repository;
 import com.algaworks.algashop.ordering.domain.model.entity.Order;
 import com.algaworks.algashop.ordering.domain.model.entity.OrderStatus;
 import com.algaworks.algashop.ordering.domain.model.entity.OrderTestDataBuilder;
+import com.algaworks.algashop.ordering.domain.model.valueobject.id.OrderId;
 import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.OrderPersistenceEntityAssembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.disassembler.OrderPersistenceEntityDisassembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.provider.OrdersPersistenceProvider;
@@ -82,5 +83,28 @@ class OrdersIT {
         Assertions.assertThatExceptionOfType(ObjectOptimisticLockingFailureException.class)
                 .isThrownBy(() -> orders.add(order2));
 
+    }
+
+    @Test
+    void shouldCountExistingOrders(){
+        Assertions.assertThat(orders.count()).isZero();
+
+        Order order = OrderTestDataBuilder.anOrder().build();
+        Order order2 = OrderTestDataBuilder.anOrder().build();
+
+        orders.add(order);
+        orders.add(order2);
+
+        Assertions.assertThat(orders.count()).isEqualTo(2L);
+    }
+
+    @Test
+    void shouldReturnIfOrderExist(){
+        Order order = OrderTestDataBuilder.anOrder().build();
+
+        orders.add(order);
+
+        Assertions.assertThat(orders.exists(order.id())).isTrue();
+        Assertions.assertThat(orders.exists(new OrderId())).isEqualTo(false);
     }
 }

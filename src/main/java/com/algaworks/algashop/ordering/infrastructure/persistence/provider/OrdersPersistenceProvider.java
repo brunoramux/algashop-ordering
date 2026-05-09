@@ -12,12 +12,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.data.util.ReflectionUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
 import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class OrdersPersistenceProvider implements Orders {
 
     private final OrderPersistenceEntityRepository repository;
@@ -34,21 +36,23 @@ public class OrdersPersistenceProvider implements Orders {
 
     @Override
     public boolean exists(OrderId orderId) {
-        return false;
+        return repository.existsById(orderId.value().toLong());
     }
 
     @Override
+    public long count() {
+        return repository.count();
+    }
+
+    @Override
+    @Transactional(readOnly = false)
     public void add(Order aggregateRoot) {
 
         long orderId = aggregateRoot.id().value().toLong();
 
         repository.findById(orderId).ifPresentOrElse(
-                (orderPersistenceEntity) -> {
-                    update(orderPersistenceEntity, aggregateRoot);
-                },
-                () -> {
-                    insert(aggregateRoot);
-                }
+                orderPersistenceEntity -> update(orderPersistenceEntity, aggregateRoot),
+                () -> insert(aggregateRoot)
         );
     }
 
@@ -71,10 +75,5 @@ public class OrdersPersistenceProvider implements Orders {
         version.setAccessible(true);
         ReflectionUtils.setField(version, aggregateRoot, orderToPersist.getVersion());
         version.setAccessible(false);
-    }
-
-    @Override
-    public int count() {
-        return 0;
     }
 }
