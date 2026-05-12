@@ -1,6 +1,8 @@
 package com.algaworks.algashop.ordering.domain.model.repository;
 
 import com.algaworks.algashop.ordering.domain.model.entity.*;
+import com.algaworks.algashop.ordering.domain.model.valueobject.Money;
+import com.algaworks.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.OrderId;
 import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.CustomerPersistenceEntityAssembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.OrderPersistenceEntityAssembler;
@@ -15,6 +17,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
+import java.math.BigDecimal;
+import java.time.Year;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -28,6 +33,7 @@ import java.util.Optional;
         })
 class OrdersIT {
 
+    @Autowired
     private Orders orders;
     private Customers customers;
 
@@ -130,5 +136,119 @@ class OrdersIT {
 
         Assertions.assertThat(orders.exists(order.id())).isTrue();
         Assertions.assertThat(orders.exists(new OrderId())).isEqualTo(false);
+    }
+
+    @Test
+    public void shouldListExistingOrdersByYear() {
+        Customer customer = CustomerTestDataBuilder.existingCustomer().build();
+        customers.add(customer);
+        orders.add(
+                OrderTestDataBuilder.anOrder()
+                        .orderStatus(OrderStatus.PLACED)
+                        .build()
+        );
+
+        orders.add(
+                OrderTestDataBuilder.anOrder()
+                        .orderStatus(OrderStatus.PLACED)
+                        .build()
+        );
+
+        orders.add(
+                OrderTestDataBuilder.anOrder()
+                        .orderStatus(OrderStatus.CANCELLED)
+                        .build()
+                );
+
+        orders.add(
+                OrderTestDataBuilder.anOrder()
+                        .orderStatus(OrderStatus.DRAFT)
+                        .build()
+                );
+
+        CustomerId customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
+
+        List<Order> listedOrders = orders.placedByCustomerInYear(customerId, Year.now());
+        Assertions.assertThat(listedOrders).isNotEmpty();
+        Assertions.assertThat(listedOrders.size()).isEqualTo(2);
+
+        listedOrders = orders.placedByCustomerInYear(customerId, Year.now().minusYears(1));
+        Assertions.assertThat(listedOrders).isEmpty();
+
+        listedOrders = orders.placedByCustomerInYear(new CustomerId(), Year.now());
+        Assertions.assertThat(listedOrders).isEmpty();
+
+    }
+
+    @Test
+    void shouldCountPlacedOrdersByYear() {
+        Customer customer = CustomerTestDataBuilder.existingCustomer().build();
+        customers.add(customer);
+        orders.add(
+                OrderTestDataBuilder.anOrder()
+                        .orderStatus(OrderStatus.PLACED)
+                        .build()
+        );
+
+        orders.add(
+                OrderTestDataBuilder.anOrder()
+                        .orderStatus(OrderStatus.PLACED)
+                        .build()
+        );
+
+        orders.add(
+                OrderTestDataBuilder.anOrder()
+                        .orderStatus(OrderStatus.CANCELLED)
+                        .build()
+        );
+
+        orders.add(
+                OrderTestDataBuilder.anOrder()
+                        .orderStatus(OrderStatus.DRAFT)
+                        .build()
+        );
+
+        CustomerId customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
+
+        long ordersCount = orders.selectQuantityByCustomerInYear(customerId, Year.now());
+
+        Assertions.assertThat(ordersCount).isEqualTo(2);
+    }
+
+    @Test
+    void shouldGetTotalOrdersAmountForCustomerId() {
+        Customer customer = CustomerTestDataBuilder.existingCustomer().build();
+        customers.add(customer);
+        orders.add(
+                OrderTestDataBuilder.anOrder()
+                        .withItems(true)
+                        .orderStatus(OrderStatus.PAID)
+                        .build()
+        );
+
+        orders.add(
+                OrderTestDataBuilder.anOrder()
+                        .orderStatus(OrderStatus.PLACED)
+                        .build()
+        );
+
+        orders.add(
+                OrderTestDataBuilder.anOrder()
+                        .orderStatus(OrderStatus.CANCELLED)
+                        .build()
+        );
+
+        orders.add(
+                OrderTestDataBuilder.anOrder()
+                        .orderStatus(OrderStatus.DRAFT)
+                        .build()
+        );
+
+        CustomerId customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
+
+        Money money = orders.totalSoldForCustomer(customerId);
+
+
+        Assertions.assertThat(money.value()).isEqualTo(new BigDecimal("16010.00"));
     }
 }

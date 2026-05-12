@@ -2,6 +2,8 @@ package com.algaworks.algashop.ordering.infrastructure.persistence.provider;
 
 import com.algaworks.algashop.ordering.domain.model.entity.Order;
 import com.algaworks.algashop.ordering.domain.model.repository.Orders;
+import com.algaworks.algashop.ordering.domain.model.valueobject.Money;
+import com.algaworks.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.OrderId;
 import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.OrderPersistenceEntityAssembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.disassembler.OrderPersistenceEntityDisassembler;
@@ -15,7 +17,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
+import java.time.OffsetDateTime;
+import java.time.Year;
+import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -69,6 +76,23 @@ public class OrdersPersistenceProvider implements Orders {
         updateVersion(aggregateRoot, orderToPersist);
     }
 
+    @Override
+    public List<Order> placedByCustomerInYear(CustomerId customerId, Year year) {
+
+        List<OrderPersistenceEntity> entity = repository.placedByCustomerInYear(customerId.value(), year.getValue());
+        return entity.stream().map(disassembler::toDomainEntity).collect(Collectors.toList());
+    }
+
+    @Override
+    public long selectQuantityByCustomerInYear(CustomerId customerId, Year year) {
+        return repository.selectQuantityByCustomerInYear(customerId.value(), year.getValue());
+    }
+
+    @Override
+    public Money totalSoldForCustomer(CustomerId customerId) {
+        return new Money(repository.totalSoldForCustomer(customerId.value()));
+    }
+
     @SneakyThrows
     private void updateVersion(Order aggregateRoot, OrderPersistenceEntity orderToPersist) {
         Field version = aggregateRoot.getClass().getDeclaredField("version");
@@ -76,4 +100,6 @@ public class OrdersPersistenceProvider implements Orders {
         ReflectionUtils.setField(version, aggregateRoot, orderToPersist.getVersion());
         version.setAccessible(false);
     }
+
+
 }
