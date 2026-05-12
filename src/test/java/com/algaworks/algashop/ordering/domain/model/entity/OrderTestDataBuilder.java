@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 public class OrderTestDataBuilder {
 
-    private CustomerId customerId = new CustomerId();
+    private CustomerId customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
     private PaymentMethod paymentMethod = PaymentMethod.GATEWAY_BALANCE;
     private Money shippingCost = new Money("10.00");
     private LocalDate expectedDeliveryDate = LocalDate.now().plusWeeks(2);

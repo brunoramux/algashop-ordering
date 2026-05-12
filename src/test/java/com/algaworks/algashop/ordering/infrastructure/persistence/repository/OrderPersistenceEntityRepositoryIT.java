@@ -1,13 +1,13 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.repository;
 
-import com.algaworks.algashop.ordering.domain.model.entity.Order;
-import com.algaworks.algashop.ordering.domain.model.entity.OrderTestDataBuilder;
 import com.algaworks.algashop.ordering.domain.model.utility.TSIDGenerator;
-import com.algaworks.algashop.ordering.domain.model.utility.UUIDGenerator;
+import com.algaworks.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntity;
+import com.algaworks.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntityTestDataBuilder;
 import com.algaworks.algashop.ordering.infrastructure.persistence.config.SpringDataAuditingConfig;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -23,15 +23,27 @@ import java.time.OffsetDateTime;
 class OrderPersistenceEntityRepositoryIT {
 
     private final OrderPersistenceEntityRepository repository;
+    private final CustomerPersistenceEntityRepository customerRepository;
+
+    private CustomerPersistenceEntity customerPersistenceEntity;
 
     @Autowired
-    public OrderPersistenceEntityRepositoryIT(OrderPersistenceEntityRepository repository) {
+    public OrderPersistenceEntityRepositoryIT(OrderPersistenceEntityRepository repository, CustomerPersistenceEntityRepository customerRepository) {
         this.repository = repository;
+        this.customerRepository = customerRepository;
+    }
+
+    @BeforeEach
+    public void setup(){
+        CustomerPersistenceEntity newCustomerPersistenceEntity = CustomerPersistenceEntityTestDataBuilder.aCustomer().build();
+        customerPersistenceEntity = customerRepository.saveAndFlush(newCustomerPersistenceEntity);
     }
 
     @Test
     public void shouldPersistOrder() {
-        OrderPersistenceEntity order = OrderPersistenceEntityTestDataBuilder.existingOrder().build();
+        OrderPersistenceEntity order = OrderPersistenceEntityTestDataBuilder.existingOrder()
+                .customer(customerPersistenceEntity)
+                .build();
 
         repository.saveAndFlush(order);
 
@@ -53,7 +65,7 @@ class OrderPersistenceEntityRepositoryIT {
         long orderId = TSIDGenerator.generateTSID().toLong();
         OrderPersistenceEntity order = OrderPersistenceEntity.builder()
                 .id(orderId)
-                .customerId(UUIDGenerator.generateTimeBasedUUID())
+                .customer(customerPersistenceEntity)
                 .totalItems(2)
                 .totalAmount(new BigDecimal(1000))
                 .status("DRAFT")

@@ -88,15 +88,17 @@ class ShoppingCartItemTest {
 
     @Test
     void shouldHandleZeroQuantity() {
-        ShoppingCartItem item = ShoppingCartItem.brandNew()
-                .shoppingCartId(new ShoppingCartId())
-                .productId(new ProductId())
-                .name(new ProductName("Test"))
-                .price(new Money("100.00"))
-                .quantity(new Quantity(0))
-                .available(true)
-                .build();
 
-        Assertions.assertThat(item.totalAmount()).isEqualTo(Money.ZERO);
+        Assertions.assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> {
+                    ShoppingCartItem.brandNew()
+                            .shoppingCartId(new ShoppingCartId())
+                            .productId(new ProductId())
+                            .name(new ProductName("Test"))
+                            .price(new Money("100.00"))
+                            .quantity(new Quantity(0))
+                            .available(true)
+                            .build();
+                });
     }
 }

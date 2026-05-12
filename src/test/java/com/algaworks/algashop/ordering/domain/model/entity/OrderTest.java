@@ -28,7 +28,7 @@ class OrderTest {
     @Test
     void shouldAddItem(){
         Order order = OrderTestDataBuilder.anOrder()
-                .orderStatus(OrderStatus.PLACED)
+                .withItems(true)
                 .build();
 
         Assertions.assertThat(order.items()).isNotEmpty();
@@ -38,7 +38,9 @@ class OrderTest {
 
     @Test
     void shouldCalculateTotals(){
-        Order order = OrderTestDataBuilder.anOrder().orderStatus(OrderStatus.PLACED).build();
+        Order order = OrderTestDataBuilder.anOrder()
+                .withItems(true)
+                .build();
 
         Assertions.assertThat(order.totalItems()).isEqualTo(new Quantity(3));
         Assertions.assertThat(order.totalAmount()).isEqualTo(new Money("16010.00"));

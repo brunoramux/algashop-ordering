@@ -1,11 +1,12 @@
 package com.algaworks.algashop.ordering.domain.model.repository;
 
-import com.algaworks.algashop.ordering.domain.model.entity.Order;
-import com.algaworks.algashop.ordering.domain.model.entity.OrderStatus;
-import com.algaworks.algashop.ordering.domain.model.entity.OrderTestDataBuilder;
+import com.algaworks.algashop.ordering.domain.model.entity.*;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.OrderId;
+import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.CustomerPersistenceEntityAssembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.OrderPersistenceEntityAssembler;
+import com.algaworks.algashop.ordering.infrastructure.persistence.disassembler.CustomerPersistenceEntityDisassembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.disassembler.OrderPersistenceEntityDisassembler;
+import com.algaworks.algashop.ordering.infrastructure.persistence.provider.CustomersPersistenceProvider;
 import com.algaworks.algashop.ordering.infrastructure.persistence.provider.OrdersPersistenceProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,18 +19,29 @@ import java.util.Optional;
 
 
 @DataJpaTest
-@Import({ OrderPersistenceEntityDisassembler.class,  OrderPersistenceEntityAssembler.class, OrdersPersistenceProvider.class })
+@Import({ OrderPersistenceEntityDisassembler.class,
+        OrderPersistenceEntityAssembler.class,
+        OrdersPersistenceProvider.class,
+        CustomersPersistenceProvider.class,
+        CustomerPersistenceEntityAssembler.class,
+        CustomerPersistenceEntityDisassembler.class,
+        })
 class OrdersIT {
 
     private Orders orders;
+    private Customers customers;
 
     @Autowired
-    public OrdersIT(Orders orders) {
+    public OrdersIT(Orders orders, Customers customers) {
         this.orders = orders;
+        this.customers = customers;
     }
 
     @Test
     public void shouldPersistAndFind(){
+
+        Customer customer = CustomerTestDataBuilder.existingCustomer().build();
+        customers.add(customer);
         Order order = OrderTestDataBuilder.anOrder()
                 .build();
         orders.add(order);
@@ -49,7 +61,10 @@ class OrdersIT {
 
     @Test
     void shouldUpdateExistingOrder(){
-        Order order = OrderTestDataBuilder.anOrder().build();
+        Customer customer = CustomerTestDataBuilder.existingCustomer().build();
+        customers.add(customer);
+        Order order = OrderTestDataBuilder.anOrder()
+                .build();
         order.place();
 
         orders.add(order);
@@ -67,7 +82,11 @@ class OrdersIT {
 
     @Test
     void shouldNotAllowStaleUpdates(){
-        Order order = OrderTestDataBuilder.anOrder().orderStatus(OrderStatus.PLACED).build();
+        Customer customer = CustomerTestDataBuilder.existingCustomer().build();
+        customers.add(customer);
+        Order order = OrderTestDataBuilder.anOrder()
+                .build();
+        order.place();
         orders.add(order);
 
         Order order1 = orders.ofId(order.id()).orElseThrow();
@@ -87,6 +106,8 @@ class OrdersIT {
 
     @Test
     void shouldCountExistingOrders(){
+        Customer customer = CustomerTestDataBuilder.existingCustomer().build();
+        customers.add(customer);
         Assertions.assertThat(orders.count()).isZero();
 
         Order order = OrderTestDataBuilder.anOrder().build();
@@ -100,8 +121,11 @@ class OrdersIT {
 
     @Test
     void shouldReturnIfOrderExist(){
-        Order order = OrderTestDataBuilder.anOrder().build();
 
+        Customer customer = CustomerTestDataBuilder.existingCustomer().build();
+        customers.add(customer);
+        Order order = OrderTestDataBuilder.anOrder()
+                .build();
         orders.add(order);
 
         Assertions.assertThat(orders.exists(order.id())).isTrue();

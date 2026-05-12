@@ -1,5 +1,6 @@
 package com.algaworks.algashop.ordering.domain.model.entity;
 
+import com.algaworks.algashop.ordering.domain.model.exception.ProductOutOfStockException;
 import com.algaworks.algashop.ordering.domain.model.exception.ShoppingCartDoesNotContainItemException;
 import com.algaworks.algashop.ordering.domain.model.exception.ShoppingCartDoesNotContainProductException;
 import com.algaworks.algashop.ordering.domain.model.valueobject.Money;
@@ -146,9 +147,8 @@ class ShoppingCartTest {
 
         Assertions.assertThat(cart.containsUnavailableItems()).isFalse();
 
-        cart.addItem(unavailableProduct, new Quantity(1));
-
-        Assertions.assertThat(cart.containsUnavailableItems()).isTrue();
+        Assertions.assertThatExceptionOfType(ProductOutOfStockException.class)
+        .isThrownBy(() -> cart.addItem(unavailableProduct, new Quantity(1)));
     }
 
     @Test
