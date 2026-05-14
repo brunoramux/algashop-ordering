@@ -33,7 +33,7 @@ public interface OrderPersistenceEntityRepository extends JpaRepository<OrderPer
                                         @Param("year") Integer year);
 
     @Query("""
-    SELECT SUM(o.totalAmount)
+    SELECT COALESCE(SUM(o.totalAmount), 0)
         FROM OrderPersistenceEntity o
             WHERE o.customer.id = :customerId
                 AND o.canceledAt IS NULL

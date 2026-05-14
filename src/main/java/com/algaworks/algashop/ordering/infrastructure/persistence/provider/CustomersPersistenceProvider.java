@@ -75,6 +75,11 @@ public class CustomersPersistenceProvider implements Customers {
         return repository.findByEmail(email.value()).map(disassembler::toDomainEntity);
     }
 
+    @Override
+    public boolean isEmailUnique(Email email, CustomerId customerId) {
+        return !repository.existsByEmailAndIdNot(email.value(), customerId.value());
+    }
+
     @SneakyThrows
     private void updateVersion(Customer aggregateRoot, CustomerPersistenceEntity customerToPersist) {
         Field version = aggregateRoot.getClass().getDeclaredField("version");
