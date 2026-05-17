@@ -91,6 +91,12 @@ public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
         this.recalculateTotals();
     }
 
+    public void empty() {
+        this.items.clear();
+        this.totalAmount = Money.ZERO;
+        totalItems = Quantity.ZERO;
+    }
+
     public void refreshItem(Product product){
         ShoppingCartItem shoppingCartItem = this.findItem(product.id());
         shoppingCartItem.refresh(product);
@@ -211,4 +217,6 @@ public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
+
 }
