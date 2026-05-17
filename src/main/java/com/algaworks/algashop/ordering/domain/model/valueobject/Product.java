@@ -22,7 +22,7 @@ public record Product(
     }
 
     public void checkOutOfStock() {
-        if (!inStock) {
+        if (Boolean.FALSE.equals(inStock)) {
             throw new ProductOutOfStockException(this.id());
         }
     }

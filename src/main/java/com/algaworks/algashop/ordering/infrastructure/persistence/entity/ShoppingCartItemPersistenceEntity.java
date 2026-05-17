@@ -27,7 +27,7 @@ public class ShoppingCartItemPersistenceEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    private Long id;
+    private UUID id;
     private UUID productId;
     private String productName;
     private BigDecimal price;
@@ -39,7 +39,7 @@ public class ShoppingCartItemPersistenceEntity {
     @ManyToOne(optional = false)
     private ShoppingCartPersistenceEntity shoppingCart;
 
-    public Long getShoppingCartId() {
+    public UUID getShoppingCartId() {
         if (shoppingCart == null) {
             return null;
         }

@@ -12,7 +12,7 @@ import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.Shop
 import com.algaworks.algashop.ordering.infrastructure.persistence.disassembler.CustomerPersistenceEntityDisassembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.disassembler.ShoppingCartPersistenceEntityDisassembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.provider.CustomersPersistenceProvider;
-import com.algaworks.algashop.ordering.infrastructure.persistence.provider.ShoppingCartsPersistenceProvider;
+import com.algaworks.algashop.ordering.infrastructure.persistence.provider.ShoppingCartPersistenceProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ import java.util.Optional;
 @Import({
         ShoppingCartPersistenceEntityDisassembler.class,
         ShoppingCartPersistenceEntityAssembler.class,
-        ShoppingCartsPersistenceProvider.class,
+        ShoppingCartPersistenceProvider.class,
         CustomersPersistenceProvider.class,
         CustomerPersistenceEntityAssembler.class,
         CustomerPersistenceEntityDisassembler.class,

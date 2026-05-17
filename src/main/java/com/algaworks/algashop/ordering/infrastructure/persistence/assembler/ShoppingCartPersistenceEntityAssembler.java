@@ -2,6 +2,7 @@ package com.algaworks.algashop.ordering.infrastructure.persistence.assembler;
 
 import com.algaworks.algashop.ordering.domain.model.entity.ShoppingCart;
 import com.algaworks.algashop.ordering.domain.model.entity.ShoppingCartItem;
+import com.algaworks.algashop.ordering.domain.model.utility.UUIDGenerator;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.ShoppingCartItemPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.ShoppingCartPersistenceEntity;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -24,8 +26,9 @@ public class ShoppingCartPersistenceEntityAssembler {
         return merge(new ShoppingCartPersistenceEntity(), shoppingCart);
     }
 
-    public ShoppingCartPersistenceEntity merge(ShoppingCartPersistenceEntity persistenceEntity, ShoppingCart shoppingCart) {
-        persistenceEntity.setId(shoppingCart.id().value().toLong());
+    public ShoppingCartPersistenceEntity merge(ShoppingCartPersistenceEntity persistenceEntity,
+                                               ShoppingCart shoppingCart) {
+        persistenceEntity.setId(shoppingCart.id().value());
         persistenceEntity.setVersion(shoppingCart.version());
         persistenceEntity.setTotalAmount(shoppingCart.totalAmount().value());
         persistenceEntity.setTotalItems(shoppingCart.totalItems().value());
@@ -61,7 +64,7 @@ public class ShoppingCartPersistenceEntityAssembler {
         }
 
         // cria HashMap com Hash<ShoppingCartItemId, ShoppingCart> com itens que já estão na Entidade de Persistência
-        Map<Long, ShoppingCartItemPersistenceEntity> existingItemMap = existingItems.stream()
+        Map<UUID, ShoppingCartItemPersistenceEntity> existingItemMap = existingItems.stream()
                 .collect(Collectors.toMap(ShoppingCartItemPersistenceEntity::getId, item -> item));
 
         // Percorre itens da entidade de Dominio, verificando quais existem na Entidade de Persistência
@@ -70,7 +73,7 @@ public class ShoppingCartPersistenceEntityAssembler {
                     // Verifica se item já existe shoppingCartItem (Dominio) em existingItemMap (Persistencia)
                     // Se existir, retorna o item, caso contrário cria novo item
                     ShoppingCartItemPersistenceEntity itemPersistence = existingItemMap.getOrDefault(
-                            shoppingCartItem.id().value().toLong(), new ShoppingCartItemPersistenceEntity()
+                            shoppingCartItem.id().value(), new ShoppingCartItemPersistenceEntity()
                     );
                     // Faz o merge das entidades
                     // apenas itens que estão no domínio ficarão na persistência. Os demais serão excluidos
@@ -86,7 +89,7 @@ public class ShoppingCartPersistenceEntityAssembler {
             ShoppingCartItemPersistenceEntity persistenceEntity,
             ShoppingCartItem shoppingCartItem
     ) {
-        persistenceEntity.setId(shoppingCartItem.id().value().toLong());
+        persistenceEntity.setId(shoppingCartItem.id().value());
         persistenceEntity.setProductId(shoppingCartItem.productId().value());
         persistenceEntity.setProductName(shoppingCartItem.name().value());
         persistenceEntity.setPrice(shoppingCartItem.price().value());

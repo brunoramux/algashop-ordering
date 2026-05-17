@@ -48,6 +48,6 @@ class ShoppingCartPersistenceEntityDisassemblerTest {
 
         Assertions.assertThat(domainEntity).isNotNull();
         Assertions.assertThat(domainEntity.items()).hasSize(2);
-        Assertions.assertThat(domainEntity.id().value().toLong()).isEqualTo(persistenceEntity.getId());
+        Assertions.assertThat(domainEntity.id().value()).isEqualTo(persistenceEntity.getId());
     }
 }

@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class ShoppingCartTestDataBuilder {
 
-    private CustomerId customerId = new CustomerId();
+    private CustomerId customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
     private ShoppingCartId shoppingCartId = new ShoppingCartId();
     private Money totalAmount = new Money("16000.00");
     private Quantity totalItems = new Quantity(3);

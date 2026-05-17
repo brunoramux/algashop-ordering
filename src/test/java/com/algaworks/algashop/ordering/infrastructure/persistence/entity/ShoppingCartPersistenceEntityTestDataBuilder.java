@@ -7,6 +7,7 @@ import com.algaworks.algashop.ordering.domain.model.valueobject.id.ShoppingCartI
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Set;
+import java.util.UUID;
 
 public class ShoppingCartPersistenceEntityTestDataBuilder {
 
@@ -14,9 +15,9 @@ public class ShoppingCartPersistenceEntityTestDataBuilder {
     }
 
     public static ShoppingCartPersistenceEntity.ShoppingCartPersistenceEntityBuilder existingShoppingCart() {
-        long shoppingCartId = TSIDGenerator.generateTSID().toLong();
+        UUID shoppingCartId = UUIDGenerator.generateTimeBasedUUID();
         ShoppingCartItemPersistenceEntity item1 = ShoppingCartItemPersistenceEntity.builder()
-                .id(new ShoppingCartItemId(TSIDGenerator.generateTSID()).value().toLong())
+                .id(UUIDGenerator.generateTimeBasedUUID())
                 .productId(UUIDGenerator.generateTimeBasedUUID())
                 .productName("IPhone")
                 .price(new BigDecimal("3000.00"))
@@ -25,7 +26,7 @@ public class ShoppingCartPersistenceEntityTestDataBuilder {
                 .available(true)
                 .build();
         ShoppingCartItemPersistenceEntity item2 = ShoppingCartItemPersistenceEntity.builder()
-                .id(new ShoppingCartItemId(TSIDGenerator.generateTSID()).value().toLong())
+                .id(UUIDGenerator.generateTimeBasedUUID())
                 .productId(UUIDGenerator.generateTimeBasedUUID())
                 .productName("MacBook")
                 .price(new BigDecimal("10000.00"))

@@ -2,6 +2,7 @@ package com.algaworks.algashop.ordering.infrastructure.persistence.provider;
 
 import com.algaworks.algashop.ordering.domain.model.entity.ShoppingCart;
 import com.algaworks.algashop.ordering.domain.model.repository.ShoppingCarts;
+import com.algaworks.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.ShoppingCartId;
 import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.ShoppingCartPersistenceEntityAssembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.disassembler.ShoppingCartPersistenceEntityDisassembler;
@@ -19,11 +20,12 @@ import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ShoppingCartsPersistenceProvider implements ShoppingCarts {
+public class ShoppingCartPersistenceProvider implements ShoppingCarts {
 
     private final ShoppingCartPersistenceEntityRepository repository;
     private final ShoppingCartPersistenceEntityAssembler assembler;
@@ -33,7 +35,7 @@ public class ShoppingCartsPersistenceProvider implements ShoppingCarts {
     @Override
     public Optional<ShoppingCart> ofId(ShoppingCartId shoppingCartId) {
         Optional<ShoppingCartPersistenceEntity> persistenceEntity = repository.findById(
-                shoppingCartId.value().toLong()
+                shoppingCartId.value()
         );
 
         return persistenceEntity.map(disassembler::toDomainEntity);
@@ -41,13 +43,13 @@ public class ShoppingCartsPersistenceProvider implements ShoppingCarts {
 
     @Override
     public boolean exists(ShoppingCartId shoppingCartId) {
-        return repository.existsById(shoppingCartId.value().toLong());
+        return repository.existsById(shoppingCartId.value());
     }
 
     @Override
     @Transactional
     public void add(ShoppingCart aggregateRoot) {
-        long shoppingCartId = aggregateRoot.id().value().toLong();
+        UUID shoppingCartId = aggregateRoot.id().value();
 
         repository.findById(shoppingCartId).ifPresentOrElse(
                 shoppingCartPersistenceEntity -> update(shoppingCartPersistenceEntity, aggregateRoot),
@@ -78,11 +80,31 @@ public class ShoppingCartsPersistenceProvider implements ShoppingCarts {
         return repository.count();
     }
 
+
+
     @SneakyThrows
     private void updateVersion(ShoppingCart aggregateRoot, ShoppingCartPersistenceEntity shoppingCartToPersist) {
         Field version = aggregateRoot.getClass().getDeclaredField("version");
         version.setAccessible(true);
         ReflectionUtils.setField(version, aggregateRoot, shoppingCartToPersist.getVersion());
         version.setAccessible(false);
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public void remove(ShoppingCart shoppingCart) {
+        repository.deleteById(shoppingCart.id().value());
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public void remove(ShoppingCartId shoppingCartId) {
+        repository.deleteById(shoppingCartId.value());
+    }
+
+    @Override
+    public Optional<ShoppingCart> ofCustomer(CustomerId customerId) {
+        return repository.findByCustomer_Id(customerId.value())
+                .map(disassembler::toDomainEntity);
     }
 }

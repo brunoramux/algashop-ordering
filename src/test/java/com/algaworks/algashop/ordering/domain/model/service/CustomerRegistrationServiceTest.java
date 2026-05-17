@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 
+// LEMBRAR DE CONFIGURAR O AGENTE DO MOCKITO
 @ExtendWith(MockitoExtension.class)
 class CustomerRegistrationServiceTest {
 

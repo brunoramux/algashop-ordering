@@ -47,7 +47,7 @@ class ShoppingCartPersistenceEntityAssemblerTest {
         ShoppingCartPersistenceEntity persistenceEntity = assembler.fromDomain(shoppingCart);
 
         Assertions.assertThat(persistenceEntity).satisfies(
-                p -> Assertions.assertThat(p.getId()).isEqualTo(shoppingCart.id().value().toLong()),
+                p -> Assertions.assertThat(p.getId()).isEqualTo(shoppingCart.id().value()),
                 p -> Assertions.assertThat(p.getCustomerId()).isEqualTo(shoppingCart.customerId().value()),
                 p -> Assertions.assertThat(p.getTotalAmount()).isEqualTo(shoppingCart.totalAmount().value()),
                 p -> Assertions.assertThat(p.getTotalItems()).isEqualTo(shoppingCart.totalItems().value()),
