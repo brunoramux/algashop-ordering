@@ -1,8 +1,6 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.entity;
 
-import com.algaworks.algashop.ordering.domain.model.utility.TSIDGenerator;
-import com.algaworks.algashop.ordering.domain.model.utility.UUIDGenerator;
-import com.algaworks.algashop.ordering.domain.model.valueobject.id.ShoppingCartItemId;
+import com.algaworks.algashop.ordering.domain.model.UUIDGenerator;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
