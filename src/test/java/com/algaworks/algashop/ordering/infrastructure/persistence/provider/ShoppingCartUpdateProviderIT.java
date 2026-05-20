@@ -1,5 +1,6 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.provider;
 
+import com.algaworks.algashop.ordering.domain.model.UUIDGenerator;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerTestDataBuilder;
 import com.algaworks.algashop.ordering.domain.model.product.ProductTestDataBuilder;
 import com.algaworks.algashop.ordering.domain.model.shoppingcart.ShoppingCart;
@@ -72,7 +73,9 @@ class ShoppingCartUpdateProviderIT {
 
         // cria 2 produtos
         Product product1 = ProductTestDataBuilder.aProduct().price(new Money("2000")).build();
-        Product product2 = ProductTestDataBuilder.aProductMacBook().price(new Money("200")).build();
+        Product product2 = ProductTestDataBuilder.aProductMacBook()
+                .id(new ProductId(UUIDGenerator.generateTimeBasedUUID()))
+                .price(new Money("200")).build();
 
         // adiciona os itens
         shoppingCart.addItem(product1, new Quantity(2));
