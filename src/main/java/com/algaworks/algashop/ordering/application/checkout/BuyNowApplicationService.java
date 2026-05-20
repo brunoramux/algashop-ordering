@@ -1,0 +1,71 @@
+package com.algaworks.algashop.ordering.application.checkout;
+
+import com.algaworks.algashop.ordering.domain.model.commons.Quantity;
+import com.algaworks.algashop.ordering.domain.model.commons.ZipCode;
+import com.algaworks.algashop.ordering.domain.model.customer.CustomerId;
+import com.algaworks.algashop.ordering.domain.model.order.*;
+import com.algaworks.algashop.ordering.domain.model.order.shipping.OriginAddressService;
+import com.algaworks.algashop.ordering.domain.model.order.shipping.ShippingCostService;
+import com.algaworks.algashop.ordering.domain.model.product.Product;
+import com.algaworks.algashop.ordering.domain.model.product.ProductCatalogService;
+import com.algaworks.algashop.ordering.domain.model.product.ProductId;
+import com.algaworks.algashop.ordering.domain.model.product.ProductNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
+
+@Service
+@RequiredArgsConstructor
+public class BuyNowApplicationService {
+
+    private final BuyNowService buyNowService;
+    private final ProductCatalogService productCatalogService;
+
+    private final ShippingCostService shippingCostService;
+    private final OriginAddressService originAddressService;
+
+    private final Orders orders;
+
+    private final ShippingInputDisassembler shippingInputDisassembler;
+    private final BillingInputDisassembler billingInputDisassembler;
+
+    @Transactional
+    public String buyNow(BuyNowInput input) {
+        Objects.requireNonNull(input);
+
+        // CONSULTA CATALOGO PARA INFORMAÇÕES DO PRODUTO
+        Product product = productCatalogService.ofId(new ProductId(input.getProductId()))
+                .orElseThrow(ProductNotFoundException::new);
+
+        // CALCULA CUSTO DE ENTREGA A PARTIR DOS ZIPCODES DE ORIGIN E DESTINO
+        ZipCode originZipCode = originAddressService.originAddress().zipCode();
+        ZipCode destinationZipCode = new ZipCode(input.getShipping().getAddress().getZipCode());
+
+        // CRIA OBJETO DE REQUEST PARA ENVIAR A API QUE CALCULA A TAXA DE ENTREGA
+        ShippingCostService.CalculationRequest calculationRequest = ShippingCostService.CalculationRequest.builder()
+                .origin(originZipCode)
+                .destination(destinationZipCode)
+                .build();
+
+        // CONSULTA API E RETORNA VALORES
+        ShippingCostService.CalculationResult calculationResponse = shippingCostService.calculate(calculationRequest);
+
+        // MONTA OS OBJETOS DE DOMINIO PARA SHIPPING E BILLING A PARTIR DOS INPUTS E DA RESPOSTA DO SERVIÇO DE CALCULO DE FRETE
+        Shipping shipping = shippingInputDisassembler.toDomainModel(input.getShipping(), calculationResponse);
+        Billing billing = billingInputDisassembler.toDomainModel(input.getBilling());
+
+        // CRIA A ORDER
+        Order order = buyNowService.buyNow(
+                product,
+                new CustomerId(input.getCustomerId()),
+                billing,
+                shipping,
+                new Quantity(input.getQuantity()),
+                PaymentMethod.valueOf(input.getPaymentMethod())
+        );
+
+        return order.id().toString();
+    }
+}
