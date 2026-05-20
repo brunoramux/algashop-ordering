@@ -53,4 +53,20 @@ public class CustomerManagementApplicationService {
         return mapper.convert(customer, CustomerOutput.class);
 
     }
+
+    @Transactional
+    public void archive(UUID rawCustomerId) {
+        Customer customer = customers.ofId(new CustomerId(rawCustomerId))
+                .orElseThrow(CustomerNotFoundException::new);
+        customer.archive();
+        customers.add(customer);
+    }
+
+    @Transactional
+    public void changeEmail(UUID rawCustomerId, String newEmail) {
+        Customer customer = customers.ofId(new CustomerId(rawCustomerId))
+                .orElseThrow(CustomerNotFoundException::new);
+        customerRegistrationService.changeEmail(customer, new Email(newEmail));
+        customers.add(customer);
+    }
 }
