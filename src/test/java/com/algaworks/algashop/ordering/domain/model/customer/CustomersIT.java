@@ -1,8 +1,8 @@
 package com.algaworks.algashop.ordering.domain.model.customer;
 
-import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.CustomerPersistenceEntityAssembler;
-import com.algaworks.algashop.ordering.infrastructure.persistence.disassembler.CustomerPersistenceEntityDisassembler;
-import com.algaworks.algashop.ordering.infrastructure.persistence.provider.CustomersPersistenceProvider;
+import com.algaworks.algashop.ordering.infrastructure.persistence.customer.CustomerPersistenceEntityAssembler;
+import com.algaworks.algashop.ordering.infrastructure.persistence.customer.CustomerPersistenceEntityDisassembler;
+import com.algaworks.algashop.ordering.infrastructure.persistence.customer.CustomersPersistenceProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
