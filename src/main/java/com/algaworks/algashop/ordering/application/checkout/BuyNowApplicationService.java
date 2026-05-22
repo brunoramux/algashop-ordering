@@ -2,6 +2,9 @@ package com.algaworks.algashop.ordering.application.checkout;
 
 import com.algaworks.algashop.ordering.domain.model.commons.Quantity;
 import com.algaworks.algashop.ordering.domain.model.commons.ZipCode;
+import com.algaworks.algashop.ordering.domain.model.customer.Customer;
+import com.algaworks.algashop.ordering.domain.model.customer.exception.CustomerNotFoundException;
+import com.algaworks.algashop.ordering.domain.model.customer.repository.Customers;
 import com.algaworks.algashop.ordering.domain.model.customer.valueobject.CustomerId;
 import com.algaworks.algashop.ordering.domain.model.order.*;
 import com.algaworks.algashop.ordering.domain.model.order.repository.Orders;
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,13 +36,19 @@ public class BuyNowApplicationService {
     private final OriginAddressService originAddressService;
 
     private final Orders orders;
+    private final Customers customers;
 
     private final ShippingInputDisassembler shippingInputDisassembler;
     private final BillingInputDisassembler billingInputDisassembler;
 
     @Transactional
     public String buyNow(BuyNowInput input) {
+
         Objects.requireNonNull(input);
+
+        Customer customer = customers.ofId(new CustomerId(input.getCustomerId())).orElseThrow(
+                CustomerNotFoundException::new
+        );
 
         // CONSULTA CATALOGO PARA INFORMAÇÕES DO PRODUTO
         Product product = productCatalogService.ofId(new ProductId(input.getProductId()))
@@ -61,10 +71,11 @@ public class BuyNowApplicationService {
         Shipping shipping = shippingInputDisassembler.toDomainModel(input.getShipping(), calculationResponse);
         Billing billing = billingInputDisassembler.toDomainModel(input.getBilling());
 
+
         // CRIA A ORDER
         Order order = buyNowService.buyNow(
                 product,
-                new CustomerId(input.getCustomerId()),
+                customer,
                 billing,
                 shipping,
                 new Quantity(input.getQuantity()),
