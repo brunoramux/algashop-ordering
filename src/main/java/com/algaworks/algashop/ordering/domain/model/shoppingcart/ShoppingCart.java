@@ -7,6 +7,7 @@ import com.algaworks.algashop.ordering.domain.model.product.Product;
 import com.algaworks.algashop.ordering.domain.model.commons.Quantity;
 import com.algaworks.algashop.ordering.domain.model.customer.valueobject.CustomerId;
 import com.algaworks.algashop.ordering.domain.model.product.valueobject.ProductId;
+import com.algaworks.algashop.ordering.domain.model.shoppingcart.event.ShoppingCartCreatedEvent;
 import com.algaworks.algashop.ordering.domain.model.shoppingcart.exception.ShoppingCartDoesNotContainItemException;
 import com.algaworks.algashop.ordering.domain.model.shoppingcart.exception.ShoppingCartDoesNotContainProductException;
 import com.algaworks.algashop.ordering.domain.model.shoppingcart.valueobject.ShoppingCartId;
@@ -42,7 +43,7 @@ public class ShoppingCart
     }
 
     public static ShoppingCart startShopping(CustomerId customerId) {
-        return new ShoppingCart(
+        ShoppingCart shoppingCart = new ShoppingCart(
                 new ShoppingCartId(),
                 customerId,
                 Money.ZERO,
@@ -51,6 +52,11 @@ public class ShoppingCart
                 new HashSet<>(),
                 null
         );
+
+        shoppingCart.publishDomainEvent(new ShoppingCartCreatedEvent(shoppingCart.id(),
+                shoppingCart.customerId(), shoppingCart.createdAt()));
+
+        return shoppingCart;
     }
 
     public void addItem(Product product, Quantity quantity) {

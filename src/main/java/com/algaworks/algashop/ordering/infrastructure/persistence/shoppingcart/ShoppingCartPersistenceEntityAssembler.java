@@ -37,6 +37,8 @@ public class ShoppingCartPersistenceEntityAssembler {
         CustomerPersistenceEntity customerPersistenceEntity = customerRepository.getReferenceById(shoppingCart.customerId().value());
         persistenceEntity.setCustomer(customerPersistenceEntity);
 
+        persistenceEntity.addEvents(shoppingCart.domainEvents());
+
         return persistenceEntity;
     }
 
