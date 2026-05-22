@@ -2,6 +2,8 @@ package com.algaworks.algashop.ordering.domain.model.product;
 
 import com.algaworks.algashop.ordering.domain.model.UUIDGenerator;
 import com.algaworks.algashop.ordering.domain.model.commons.Money;
+import com.algaworks.algashop.ordering.domain.model.product.valueobject.ProductId;
+import com.algaworks.algashop.ordering.domain.model.product.valueobject.ProductName;
 
 public class ProductTestDataBuilder {
     public static ProductId DEFAULT_PRODUCT_ID = new ProductId(UUIDGenerator.generateTimeBasedUUID());

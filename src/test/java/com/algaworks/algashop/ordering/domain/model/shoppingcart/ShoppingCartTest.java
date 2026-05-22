@@ -3,7 +3,13 @@ package com.algaworks.algashop.ordering.domain.model.shoppingcart;
 import com.algaworks.algashop.ordering.domain.model.product.*;
 import com.algaworks.algashop.ordering.domain.model.commons.Money;
 import com.algaworks.algashop.ordering.domain.model.commons.Quantity;
-import com.algaworks.algashop.ordering.domain.model.customer.CustomerId;
+import com.algaworks.algashop.ordering.domain.model.customer.valueobject.CustomerId;
+import com.algaworks.algashop.ordering.domain.model.product.exception.ProductOutOfStockException;
+import com.algaworks.algashop.ordering.domain.model.product.valueobject.ProductId;
+import com.algaworks.algashop.ordering.domain.model.product.valueobject.ProductName;
+import com.algaworks.algashop.ordering.domain.model.shoppingcart.exception.ShoppingCartDoesNotContainItemException;
+import com.algaworks.algashop.ordering.domain.model.shoppingcart.exception.ShoppingCartDoesNotContainProductException;
+import com.algaworks.algashop.ordering.domain.model.shoppingcart.valueobject.ShoppingCartItemId;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

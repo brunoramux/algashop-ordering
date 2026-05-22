@@ -2,7 +2,7 @@ package com.algaworks.algashop.ordering.infrastructure.persistence.entity;
 
 import com.algaworks.algashop.ordering.domain.model.TSIDGenerator;
 import com.algaworks.algashop.ordering.domain.model.UUIDGenerator;
-import com.algaworks.algashop.ordering.domain.model.order.OrderItemId;
+import com.algaworks.algashop.ordering.domain.model.order.valueobject.OrderItemId;
 import com.algaworks.algashop.ordering.infrastructure.persistence.order.OrderItemPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.order.OrderPersistenceEntity;
 

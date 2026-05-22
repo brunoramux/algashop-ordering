@@ -1,12 +1,17 @@
 package com.algaworks.algashop.ordering.application.shoppingcart;
 
 import com.algaworks.algashop.ordering.domain.model.commons.Quantity;
-import com.algaworks.algashop.ordering.domain.model.customer.CustomerId;
+import com.algaworks.algashop.ordering.domain.model.customer.valueobject.CustomerId;
 import com.algaworks.algashop.ordering.domain.model.product.Product;
-import com.algaworks.algashop.ordering.domain.model.product.ProductCatalogService;
-import com.algaworks.algashop.ordering.domain.model.product.ProductId;
-import com.algaworks.algashop.ordering.domain.model.product.ProductNotFoundException;
+import com.algaworks.algashop.ordering.domain.model.product.service.ProductCatalogService;
+import com.algaworks.algashop.ordering.domain.model.product.valueobject.ProductId;
+import com.algaworks.algashop.ordering.domain.model.product.exception.ProductNotFoundException;
 import com.algaworks.algashop.ordering.domain.model.shoppingcart.*;
+import com.algaworks.algashop.ordering.domain.model.shoppingcart.exception.ShoppingCartNotFoundException;
+import com.algaworks.algashop.ordering.domain.model.shoppingcart.repository.ShoppingCarts;
+import com.algaworks.algashop.ordering.domain.model.shoppingcart.service.ShoppingService;
+import com.algaworks.algashop.ordering.domain.model.shoppingcart.valueobject.ShoppingCartId;
+import com.algaworks.algashop.ordering.domain.model.shoppingcart.valueobject.ShoppingCartItemId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

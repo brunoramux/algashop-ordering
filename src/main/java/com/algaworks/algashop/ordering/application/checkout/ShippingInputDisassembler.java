@@ -2,8 +2,8 @@ package com.algaworks.algashop.ordering.application.checkout;
 
 import com.algaworks.algashop.ordering.application.commons.AddressData;
 import com.algaworks.algashop.ordering.domain.model.commons.*;
-import com.algaworks.algashop.ordering.domain.model.order.Recipient;
-import com.algaworks.algashop.ordering.domain.model.order.Shipping;
+import com.algaworks.algashop.ordering.domain.model.order.valueobject.Recipient;
+import com.algaworks.algashop.ordering.domain.model.order.valueobject.Shipping;
 import com.algaworks.algashop.ordering.domain.model.order.shipping.ShippingCostService;
 import org.springframework.stereotype.Component;
 

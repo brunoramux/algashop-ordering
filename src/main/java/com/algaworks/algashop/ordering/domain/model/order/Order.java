@@ -4,8 +4,12 @@ import com.algaworks.algashop.ordering.domain.model.AbstractEventSourceEntity;
 import com.algaworks.algashop.ordering.domain.model.AggregateRoot;
 import com.algaworks.algashop.ordering.domain.model.commons.Money;
 import com.algaworks.algashop.ordering.domain.model.commons.Quantity;
+import com.algaworks.algashop.ordering.domain.model.order.event.OrderPlacedEvent;
+import com.algaworks.algashop.ordering.domain.model.order.event.OrderReadyEvent;
+import com.algaworks.algashop.ordering.domain.model.order.exception.*;
+import com.algaworks.algashop.ordering.domain.model.order.valueobject.*;
 import com.algaworks.algashop.ordering.domain.model.product.Product;
-import com.algaworks.algashop.ordering.domain.model.customer.CustomerId;
+import com.algaworks.algashop.ordering.domain.model.customer.valueobject.CustomerId;
 import lombok.Builder;
 
 import java.math.BigDecimal;
@@ -117,6 +121,8 @@ public class Order
     public void markAsReady(){
         this.setReadyAt(OffsetDateTime.now());
         this.changeStatus(OrderStatus.READY);
+
+        this.publishDomainEvent(new OrderReadyEvent(this.customerId, this.id(), this.billing().email()));
     }
 
     public void cancel(){

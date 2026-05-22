@@ -1,7 +1,7 @@
 package com.algaworks.algashop.ordering.infrastructure.listener.order;
 
 import com.algaworks.algashop.ordering.application.order.OrderNotificationService;
-import com.algaworks.algashop.ordering.domain.model.order.OrderPlacedEvent;
+import com.algaworks.algashop.ordering.domain.model.order.event.OrderPlacedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;

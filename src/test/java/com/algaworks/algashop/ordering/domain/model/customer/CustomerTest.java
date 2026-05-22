@@ -1,6 +1,9 @@
 package com.algaworks.algashop.ordering.domain.model.customer;
 
 import com.algaworks.algashop.ordering.domain.model.commons.*;
+import com.algaworks.algashop.ordering.domain.model.customer.event.CustomerRegisteredEvent;
+import com.algaworks.algashop.ordering.domain.model.customer.exception.CustomerArchivedException;
+import com.algaworks.algashop.ordering.domain.model.customer.valueobject.BirthDate;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -1,5 +1,6 @@
 package com.algaworks.algashop.ordering.domain.model.customer;
 
+import com.algaworks.algashop.ordering.domain.model.customer.valueobject.BirthDate;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -1,10 +1,12 @@
 package com.algaworks.algashop.ordering.domain.model.order;
 
 import com.algaworks.algashop.ordering.domain.model.commons.Money;
+import com.algaworks.algashop.ordering.domain.model.order.valueobject.OrderId;
+import com.algaworks.algashop.ordering.domain.model.order.valueobject.OrderItemId;
 import com.algaworks.algashop.ordering.domain.model.product.Product;
-import com.algaworks.algashop.ordering.domain.model.product.ProductName;
+import com.algaworks.algashop.ordering.domain.model.product.valueobject.ProductName;
 import com.algaworks.algashop.ordering.domain.model.commons.Quantity;
-import com.algaworks.algashop.ordering.domain.model.product.ProductId;
+import com.algaworks.algashop.ordering.domain.model.product.valueobject.ProductId;
 import lombok.Builder;
 
 import java.math.BigDecimal;

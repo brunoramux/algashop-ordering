@@ -1,10 +1,14 @@
 package com.algaworks.algashop.ordering.application.customer;
 
 import com.algaworks.algashop.ordering.domain.model.customer.*;
+import com.algaworks.algashop.ordering.domain.model.customer.exception.CustomerNotFoundException;
+import com.algaworks.algashop.ordering.domain.model.customer.repository.Customers;
+import com.algaworks.algashop.ordering.domain.model.customer.service.CustomerLoyaltyPointsService;
+import com.algaworks.algashop.ordering.domain.model.customer.valueobject.CustomerId;
 import com.algaworks.algashop.ordering.domain.model.order.Order;
-import com.algaworks.algashop.ordering.domain.model.order.OrderId;
-import com.algaworks.algashop.ordering.domain.model.order.OrderNotFoundException;
-import com.algaworks.algashop.ordering.domain.model.order.Orders;
+import com.algaworks.algashop.ordering.domain.model.order.valueobject.OrderId;
+import com.algaworks.algashop.ordering.domain.model.order.exception.OrderNotFoundException;
+import com.algaworks.algashop.ordering.domain.model.order.repository.Orders;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

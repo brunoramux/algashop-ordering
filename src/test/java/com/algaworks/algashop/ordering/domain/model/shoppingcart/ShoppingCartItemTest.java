@@ -2,9 +2,11 @@ package com.algaworks.algashop.ordering.domain.model.shoppingcart;
 
 import com.algaworks.algashop.ordering.domain.model.commons.Money;
 import com.algaworks.algashop.ordering.domain.model.product.Product;
-import com.algaworks.algashop.ordering.domain.model.product.ProductName;
+import com.algaworks.algashop.ordering.domain.model.product.valueobject.ProductName;
 import com.algaworks.algashop.ordering.domain.model.commons.Quantity;
-import com.algaworks.algashop.ordering.domain.model.product.ProductId;
+import com.algaworks.algashop.ordering.domain.model.product.valueobject.ProductId;
+import com.algaworks.algashop.ordering.domain.model.shoppingcart.exception.ShoppingCartItemIncompatibleProductException;
+import com.algaworks.algashop.ordering.domain.model.shoppingcart.valueobject.ShoppingCartId;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

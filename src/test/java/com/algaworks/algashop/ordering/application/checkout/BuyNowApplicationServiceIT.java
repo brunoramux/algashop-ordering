@@ -1,12 +1,10 @@
 package com.algaworks.algashop.ordering.application.checkout;
 
-import com.algaworks.algashop.ordering.application.customer.CustomerManagementApplicationService;
 import com.algaworks.algashop.ordering.domain.model.customer.Customer;
-import com.algaworks.algashop.ordering.domain.model.customer.CustomerRegistrationService;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerTestDataBuilder;
-import com.algaworks.algashop.ordering.domain.model.customer.Customers;
+import com.algaworks.algashop.ordering.domain.model.customer.repository.Customers;
 import com.algaworks.algashop.ordering.domain.model.order.BuyNowInputTestDataBuilder;
-import com.algaworks.algashop.ordering.domain.model.order.OrderPlacedEvent;
+import com.algaworks.algashop.ordering.domain.model.order.event.OrderPlacedEvent;
 import com.algaworks.algashop.ordering.infrastructure.listener.order.OrderEventListener;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

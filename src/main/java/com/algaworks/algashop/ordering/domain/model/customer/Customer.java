@@ -4,6 +4,12 @@ import com.algaworks.algashop.ordering.domain.model.AbstractEventSourceEntity;
 import com.algaworks.algashop.ordering.domain.model.AggregateRoot;
 import com.algaworks.algashop.ordering.domain.model.ErrorMessages;
 import com.algaworks.algashop.ordering.domain.model.commons.*;
+import com.algaworks.algashop.ordering.domain.model.customer.event.CustomerArchivedEvent;
+import com.algaworks.algashop.ordering.domain.model.customer.event.CustomerRegisteredEvent;
+import com.algaworks.algashop.ordering.domain.model.customer.exception.CustomerArchivedException;
+import com.algaworks.algashop.ordering.domain.model.customer.valueobject.BirthDate;
+import com.algaworks.algashop.ordering.domain.model.customer.valueobject.CustomerId;
+import com.algaworks.algashop.ordering.domain.model.customer.valueobject.LoyaltyPoints;
 import lombok.Builder;
 
 import java.time.OffsetDateTime;
