@@ -8,25 +8,26 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomerPersistenceEntityAssembler {
 
-    public CustomerPersistenceEntity fromDomain(Customer aggregateRoot) {
-        return merge(new  CustomerPersistenceEntity(), aggregateRoot);
+    public CustomerPersistenceEntity fromDomain(Customer customer) {
+        return merge(new  CustomerPersistenceEntity(), customer);
     }
 
-    public CustomerPersistenceEntity merge(CustomerPersistenceEntity persistenceEntity, Customer aggregateRoot) {
-        persistenceEntity.setId(aggregateRoot.id().value());
-        persistenceEntity.setFirstName(aggregateRoot.fullName().firstName());
-        persistenceEntity.setLastName(aggregateRoot.fullName().lastName());
-        persistenceEntity.setBirthDate(aggregateRoot.birthDate().value());
-        persistenceEntity.setEmail(aggregateRoot.email().value());
-        persistenceEntity.setPhone(aggregateRoot.phone().value());
-        persistenceEntity.setDocument(aggregateRoot.document().value());
-        persistenceEntity.setPromotionNotificationsAllowed(aggregateRoot.isPromotionNotificationsAllowed());
-        persistenceEntity.setArchived(aggregateRoot.isArchived());
-        persistenceEntity.setRegisteredAt(aggregateRoot.registeredAt());
-        persistenceEntity.setArchivedAt(aggregateRoot.archivedAt());
-        persistenceEntity.setLoyaltyPoints(aggregateRoot.loyaltyPoints().value());
-        persistenceEntity.setVersion(aggregateRoot.version());
-        persistenceEntity.setAddress(toAddressEmbeddable(aggregateRoot.address()));
+    public CustomerPersistenceEntity merge(CustomerPersistenceEntity persistenceEntity, Customer customer) {
+        persistenceEntity.setId(customer.id().value());
+        persistenceEntity.setFirstName(customer.fullName().firstName());
+        persistenceEntity.setLastName(customer.fullName().lastName());
+        persistenceEntity.setBirthDate(customer.birthDate().value());
+        persistenceEntity.setEmail(customer.email().value());
+        persistenceEntity.setPhone(customer.phone().value());
+        persistenceEntity.setDocument(customer.document().value());
+        persistenceEntity.setPromotionNotificationsAllowed(customer.isPromotionNotificationsAllowed());
+        persistenceEntity.setArchived(customer.isArchived());
+        persistenceEntity.setRegisteredAt(customer.registeredAt());
+        persistenceEntity.setArchivedAt(customer.archivedAt());
+        persistenceEntity.setLoyaltyPoints(customer.loyaltyPoints().value());
+        persistenceEntity.setVersion(customer.version());
+        persistenceEntity.setAddress(toAddressEmbeddable(customer.address()));
+        persistenceEntity.addEvents(customer.domainEvents());
 
         return persistenceEntity;
     }

@@ -66,6 +66,8 @@ public class BuyNowApplicationService {
                 PaymentMethod.valueOf(input.getPaymentMethod())
         );
 
+        orders.add(order);
+
         return order.id().toString();
     }
 }

@@ -1,5 +1,6 @@
 package com.algaworks.algashop.ordering.domain.model.customer;
 
+import com.algaworks.algashop.ordering.domain.model.AbstractEventSourceEntity;
 import com.algaworks.algashop.ordering.domain.model.AggregateRoot;
 import com.algaworks.algashop.ordering.domain.model.ErrorMessages;
 import com.algaworks.algashop.ordering.domain.model.commons.*;
@@ -9,7 +10,9 @@ import java.time.OffsetDateTime;
 import java.util.Objects;
 
 
-public class Customer implements AggregateRoot<CustomerId> {
+public class Customer
+        extends AbstractEventSourceEntity
+        implements AggregateRoot<CustomerId> {
 
     private CustomerId id;
     private FullName fullName;
@@ -28,7 +31,7 @@ public class Customer implements AggregateRoot<CustomerId> {
     @Builder(builderClassName = "BrandNewCustomerBuild", builderMethodName = "brandNew")
     private static Customer createBrandNew(BirthDate birthDate, FullName fullName, Boolean promotionNotificationsAllowed,
                                     Document document, Phone phone, Email email, Address address, Long version) {
-        return new Customer(
+        Customer customer = new Customer(
                 new CustomerId(),
                 fullName,
                 birthDate,
@@ -43,6 +46,10 @@ public class Customer implements AggregateRoot<CustomerId> {
                 address,
                 null
         );
+
+        customer.publishDomainEvent(new CustomerRegisteredEvent(customer.id(), customer.registeredAt(),
+                customer.fullName(), customer.email()));
+        return customer;
     }
 
     @Builder(builderClassName = "ExistingCustomerBuild", builderMethodName = "existing")
@@ -97,6 +104,8 @@ public class Customer implements AggregateRoot<CustomerId> {
         this.setDocument(new Document("000-00-0000"));
         this.setPromotionNotificationsAllowed(false);
         this.setAddress(this.address().toBuilder().number("Anonymous").complement(null).build());
+
+        this.publishDomainEvent(new CustomerArchivedEvent(this.id(), this.archivedAt()));
 
     }
 

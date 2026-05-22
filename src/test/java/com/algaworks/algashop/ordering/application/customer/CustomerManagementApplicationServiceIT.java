@@ -72,4 +72,38 @@ class CustomerManagementApplicationServiceIT {
         Assertions.assertThat(customerOutput.getLastName()).isEqualTo("Doe");
         Assertions.assertThat(customerOutput.getBirthDate()).isEqualTo(LocalDate.of(1990, 1, 1));
     }
+
+    @Test
+    void shouldBeAbleToUpdateCustomerEmail(){
+        CustomerInput input = CustomerInput.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .birthDate(LocalDate.of(1990, 1, 1))
+                .email("johndoe2@email.com")
+                .phone("11999999999")
+                .document("12345678900")
+                .promotionNotificationsAllowed(true)
+                .address(AddressData.builder()
+                        .street("123 Main St")
+                        .number("12345")
+                        .city("Main St")
+                        .state("Main St")
+                        .zipCode("12400-000")
+                        .neighborhood("Main St")
+                        .complement("Main St")
+                        .build())
+                .build();
+
+        UUID customerId = service.create(input);
+
+        service.changeEmail(customerId, "bruno.lemos@live.com");
+
+        CustomerOutput customer = service.findById(customerId);
+
+        Assertions.assertThat(customer).isNotNull();
+        Assertions.assertThat(customer.getId()).isEqualTo(customerId);
+        Assertions.assertThat(customer.getEmail()).isEqualTo("bruno.lemos@live.com");
+
+
+    }
 }

@@ -20,7 +20,7 @@ class CustomerRegistrationServiceIT {
         Customer customer = service.register(
                 new FullName("Bruno", "Ramos Lemos"),
                 new BirthDate(LocalDate.of(1990, 10, 30)),
-                new Email("bruno.lemos@live.com"),
+                new Email("bruno.lemos2@live.com"),
                 new Phone("16994610753"),
                 new Document("333-22-33333"),
                 true,
@@ -36,7 +36,7 @@ class CustomerRegistrationServiceIT {
         );
 
         Assertions.assertThat(customer).isNotNull();
-        Assertions.assertThat(customer.email()).isEqualTo(new Email("bruno.lemos@live.com"));
+        Assertions.assertThat(customer.email()).isEqualTo(new Email("bruno.lemos2@live.com"));
     }
 
 }

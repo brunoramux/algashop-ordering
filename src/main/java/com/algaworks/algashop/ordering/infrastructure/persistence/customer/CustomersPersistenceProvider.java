@@ -45,6 +45,8 @@ public class CustomersPersistenceProvider implements Customers {
                 customerPersistenceEntity -> update(customerPersistenceEntity, aggregateRoot),
                 () -> insert(aggregateRoot)
         );
+
+        aggregateRoot.clearDomainEvents();
     }
 
     private void insert(Customer aggregateRoot) {
