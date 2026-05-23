@@ -160,7 +160,7 @@ class OrdersIT {
 
         orders.add(
                 OrderTestDataBuilder.anOrder()
-                        .orderStatus(OrderStatus.CANCELLED)
+                        .orderStatus(OrderStatus.CANCELED)
                         .build()
                 );
 
@@ -202,7 +202,7 @@ class OrdersIT {
 
         orders.add(
                 OrderTestDataBuilder.anOrder()
-                        .orderStatus(OrderStatus.CANCELLED)
+                        .orderStatus(OrderStatus.CANCELED)
                         .build()
         );
 
@@ -238,7 +238,7 @@ class OrdersIT {
 
         orders.add(
                 OrderTestDataBuilder.anOrder()
-                        .orderStatus(OrderStatus.CANCELLED)
+                        .orderStatus(OrderStatus.CANCELED)
                         .build()
         );
 

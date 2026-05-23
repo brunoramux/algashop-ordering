@@ -7,6 +7,8 @@ import com.algaworks.algashop.ordering.domain.model.product.ProductTestDataBuild
 import com.algaworks.algashop.ordering.domain.model.customer.valueobject.CustomerId;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.util.HashSet;
 
 public class OrderTestDataBuilder {
 
@@ -41,20 +43,36 @@ public class OrderTestDataBuilder {
             order.addItem(ProductTestDataBuilder.aProductMacBook().build(), new Quantity(1));
         }
 
-        switch(this.orderStatus) {
-            case DRAFT -> {}
-            case PLACED -> {
-                order.place();
-            }
-            case PAID -> {
-                order.place();
-                order.markAsPaid();
-            }
-            case READY -> {}
-            case CANCELLED -> {}
-        }
+        OffsetDateTime now = OffsetDateTime.now();
 
-        return order;
+        return switch(this.orderStatus) {
+            case DRAFT -> order;
+            case PLACED -> existingFrom(order, now, null, null, null, OrderStatus.PLACED);
+            case PAID -> existingFrom(order, now, now, null, null, OrderStatus.PAID);
+            case READY -> existingFrom(order, now, now, null, now, OrderStatus.READY);
+            case CANCELED -> existingFrom(order, null, null, now, null, OrderStatus.CANCELED);
+        };
+
+    }
+
+    private Order existingFrom(Order order, OffsetDateTime placedAt, OffsetDateTime paidAt,
+                               OffsetDateTime canceledAt, OffsetDateTime readyAt, OrderStatus status) {
+        return Order.existing()
+                .id(order.id())
+                .version(order.version())
+                .customerId(order.customerId())
+                .totalAmount(order.totalAmount())
+                .totalItems(order.totalItems())
+                .placedAt(placedAt)
+                .paidAt(paidAt)
+                .canceledAt(canceledAt)
+                .readyAt(readyAt)
+                .billing(order.billing())
+                .shipping(order.shipping())
+                .status(status)
+                .paymentMethod(order.paymentMethod())
+                .items(new HashSet<>(order.items()))
+                .build();
 
     }
 

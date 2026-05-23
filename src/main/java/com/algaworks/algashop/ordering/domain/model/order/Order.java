@@ -127,7 +127,7 @@ public class Order
 
     public void cancel(){
         this.setCanceledAt(OffsetDateTime.now());
-        this.changeStatus(OrderStatus.CANCELLED);
+        this.changeStatus(OrderStatus.CANCELED);
     }
 
     public void changePaymentMethod(PaymentMethod paymentMethod){
@@ -192,7 +192,7 @@ public class Order
     }
 
     public boolean isCancelled(){
-        return this.status().equals(OrderStatus.CANCELLED);
+        return this.status().equals(OrderStatus.CANCELED);
     }
 
     public OrderId id() {

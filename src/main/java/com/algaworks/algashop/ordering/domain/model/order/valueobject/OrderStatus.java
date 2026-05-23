@@ -8,7 +8,7 @@ public enum OrderStatus {
     PLACED(DRAFT),
     PAID(PLACED),
     READY(PAID),
-    CANCELLED(DRAFT, PLACED, PAID, READY);
+    CANCELED(DRAFT, PLACED, PAID, READY);
 
     OrderStatus(OrderStatus... previousStatuses){
         this.previousStatuses = Arrays.asList(previousStatuses);
