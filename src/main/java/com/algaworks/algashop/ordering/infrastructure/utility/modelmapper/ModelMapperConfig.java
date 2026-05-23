@@ -1,10 +1,15 @@
 package com.algaworks.algashop.ordering.infrastructure.utility.modelmapper;
 
 import com.algaworks.algashop.ordering.application.customer.CustomerOutput;
+import com.algaworks.algashop.ordering.application.order.query.OrderDetailOutput;
+import com.algaworks.algashop.ordering.application.order.query.OrderItemDetailOutput;
 import com.algaworks.algashop.ordering.application.utility.Mapper;
 import com.algaworks.algashop.ordering.domain.model.commons.FullName;
 import com.algaworks.algashop.ordering.domain.model.customer.valueobject.BirthDate;
 import com.algaworks.algashop.ordering.domain.model.customer.Customer;
+import com.algaworks.algashop.ordering.infrastructure.persistence.order.OrderItemPersistenceEntity;
+import com.algaworks.algashop.ordering.infrastructure.persistence.order.OrderPersistenceEntity;
+import io.hypersistence.tsid.TSID;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -44,6 +49,15 @@ public class ModelMapperConfig {
                 return birthDate.value();
             };
 
+    private static final Converter<Long, String> longToStringTSIDConverter =
+            context -> {
+                Long tsidAsLong = context.getSource();
+                if(tsidAsLong == null) {
+                    return null;
+                }
+                return new TSID(tsidAsLong).toString();
+            };
+
 
     @Bean
     public Mapper mapper(){
@@ -75,6 +89,19 @@ public class ModelMapperConfig {
                 )
                 .addMappings(mapping ->
                         mapping.using(birthDateToLocalDateConverter).map(Customer::birthDate, CustomerOutput::setBirthDate)
+                );
+
+        modelMapper.createTypeMap(OrderPersistenceEntity.class, OrderDetailOutput.class)
+                .addMappings(mapping ->
+                        mapping.using(longToStringTSIDConverter).map(OrderPersistenceEntity::getId, OrderDetailOutput::setId)
+                );
+
+        modelMapper.createTypeMap(OrderItemPersistenceEntity.class, OrderItemDetailOutput.class)
+                .addMappings(mapping ->
+                        mapping.using(longToStringTSIDConverter).map(OrderItemPersistenceEntity::getId, OrderItemDetailOutput::setId)
+                )
+                .addMappings(mapping ->
+                        mapping.using(longToStringTSIDConverter).map(OrderItemPersistenceEntity::getOrderId, OrderItemDetailOutput::setOrderId)
                 );
 
     }

@@ -1,6 +1,8 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.customer;
 
+import com.algaworks.algashop.ordering.application.customer.CustomerOutput;
 import com.algaworks.algashop.ordering.domain.model.customer.Customer;
+import com.algaworks.algashop.ordering.domain.model.customer.exception.CustomerNotFoundException;
 import com.algaworks.algashop.ordering.domain.model.customer.repository.Customers;
 import com.algaworks.algashop.ordering.domain.model.commons.Email;
 import com.algaworks.algashop.ordering.domain.model.customer.valueobject.CustomerId;
@@ -25,10 +27,17 @@ public class CustomersPersistenceProvider implements Customers {
     private final CustomerPersistenceEntityDisassembler disassembler;
     private final EntityManager entityManager;
 
+    // RETORNA PERSISTENCEENTITY
     @Override
     public Optional<Customer> ofId(CustomerId customerId) {
         Optional<CustomerPersistenceEntity> persistenceEntity = repository.findById(customerId.value());
+
         return persistenceEntity.map(disassembler::toDomainEntity);
+    }
+
+    // RETORNA DTO DE OUTPUT DIRETAMENTE USANDO QUERY JPQL. IMPLEMENTAÇÃO DE CUSTOMER PERSISTENCEENTITYQUERIES. REPOSITÓRIO EXTENDE.
+    public CustomerOutput findById(UUID customerId){
+        return repository.findByIdAsOutput(customerId).orElseThrow(CustomerNotFoundException::new);
     }
 
     @Override
