@@ -1,8 +1,6 @@
 package com.algaworks.algashop.ordering.presentation;
 
-import com.algaworks.algashop.ordering.application.customer.CustomerInput;
-import com.algaworks.algashop.ordering.application.customer.CustomerManagementApplicationService;
-import com.algaworks.algashop.ordering.application.customer.CustomerOutput;
+import com.algaworks.algashop.ordering.application.customer.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +14,7 @@ import java.util.UUID;
 public class CustomerController {
 
     private final CustomerManagementApplicationService customerManagementApplicationService;
+    private final CustomerQueryService customerQueryService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -23,4 +22,10 @@ public class CustomerController {
         UUID customerId = customerManagementApplicationService.create(input);
         return customerManagementApplicationService.findById(customerId);
     }
+
+    @GetMapping
+    public PageModel<CustomerSummaryOutput> findAll(CustomerFilter customerFilter){
+        return PageModel.of(customerQueryService.filter(customerFilter));
+    }
 }
+
