@@ -29,19 +29,16 @@ public class CustomerQueryServiceImpl implements CustomerQueryService {
     private final EntityManager entityManager;
 
     private static final String findByIdAsOutputJPQL = """
-            SELECT new com.algaworks.algashop.ordering.application.customer.query.CustomerOutput(
+            SELECT new com.algaworks.algashop.ordering.application.customer.CustomerOutput(
                 c.id,
                 c.firstName,
                 c.lastName,
                 c.email,
-                c.document,
                 c.phone,
+                c.document,
                 c.birthDate,
-                c.loyaltyPoints,
-                c.registeredAt,
-                c.archivedAt,
                 c.promotionNotificationsAllowed,
-                c.archived,
+                c.loyaltyPoints,
                 new com.algaworks.algashop.ordering.application.commons.AddressData(
                     c.address.street,
                     c.address.number,
@@ -50,7 +47,10 @@ public class CustomerQueryServiceImpl implements CustomerQueryService {
                     c.address.city,
                     c.address.state,
                     c.address.zipCode
-                )
+                ),
+                c.registeredAt,
+                c.archivedAt,
+                c.archived
             )
             FROM CustomerPersistenceEntity c
             WHERE c.id = :id""";
