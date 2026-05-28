@@ -3,6 +3,7 @@ package com.algaworks.algashop.ordering.presentation;
 import com.algaworks.algashop.ordering.application.commons.AddressData;
 import com.algaworks.algashop.ordering.application.customer.*;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerSummaryOutputTestDataBuilder;
+import com.algaworks.algashop.ordering.domain.model.customer.CustomerTestDataBuilder;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -231,5 +232,27 @@ class CustomerControllerContractTest {
                         "content[1].registeredAt", Matchers.is(formatter.format(customer2.getRegisteredAt()))
 
                 );
+    }
+
+    @Test
+    public void findByIdContract() {
+        CustomerOutput customer = CustomerOutput.builder()
+                .id(UUID.randomUUID())
+                .registeredAt(OffsetDateTime.now())
+                .phone("1191234564")
+                .build();
+        Mockito.when(customerQueryService.findById(customer.getId())).thenReturn(customer);
+
+        RestAssuredMockMvc
+                .given()
+                .accept(MediaType.APPLICATION_JSON)
+                .when()
+                .get("/api/v1/customers/{customerID}", customer.getId())
+                .then()
+                .assertThat()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .statusCode(HttpStatus.OK.value())
+                .body("id", Matchers.equalTo(customer.getId().toString()));
+
     }
 }
