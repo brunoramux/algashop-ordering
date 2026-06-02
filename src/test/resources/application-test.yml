@@ -11,6 +11,7 @@ spring:
     show-sql: 'true'
   flyway:
     enabled: false
+    clean-disabled: false
 
 algashop:
   integrations:
