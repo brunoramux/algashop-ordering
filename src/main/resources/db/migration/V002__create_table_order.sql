@@ -37,6 +37,7 @@ create table public."order" (
         billing_first_name varchar(255),
         billing_last_name varchar(255),
         billing_phone varchar(255),
+        billing_email varchar(255),
         primary key (id)
 );
 

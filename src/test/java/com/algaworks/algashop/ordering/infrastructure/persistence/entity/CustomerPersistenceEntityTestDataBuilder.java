@@ -5,6 +5,7 @@ import com.algaworks.algashop.ordering.infrastructure.persistence.customer.Custo
 import com.algaworks.algashop.ordering.infrastructure.persistence.commons.AddressEmbeddable;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 
 public class CustomerPersistenceEntityTestDataBuilder {
 
@@ -21,13 +22,17 @@ public class CustomerPersistenceEntityTestDataBuilder {
                         .email("bruno.lemos@live.com")
                         .document("1234567")
                         .phone("1234556678")
+                        .loyaltyPoints(0)
                         .promotionNotificationsAllowed(true)
+                        .archived(false)
+                        .registeredAt(OffsetDateTime.now())
                 .address(AddressEmbeddable.builder()
                         .street("SQN 403")
                         .complement("Bloco G Apto 301")
+                        .neighborhood("Asa Norte")
                         .city("Brasilia")
                         .number("0")
-                        .zipCode("534040-000")
+                        .zipCode("53040-000")
                         .state("Distrito Federal")
                         .build());
 

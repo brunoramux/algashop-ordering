@@ -13,8 +13,10 @@ import com.algaworks.algashop.ordering.infrastructure.persistence.order.OrdersPe
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
 @Import({ OrderPersistenceEntityDisassembler.class,
@@ -24,6 +26,8 @@ import org.springframework.context.annotation.Import;
         CustomerPersistenceEntityAssembler.class,
         CustomerPersistenceEntityDisassembler.class,
 })
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Sql(scripts = "/sql/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class OrdersPersistenceProviderIT {
 
     private final OrdersPersistenceProvider persistenceProvider;

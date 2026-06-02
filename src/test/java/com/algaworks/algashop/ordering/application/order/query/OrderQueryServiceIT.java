@@ -2,6 +2,7 @@ package com.algaworks.algashop.ordering.application.order.query;
 
 import com.algaworks.algashop.ordering.application.utility.PageFilter;
 import com.algaworks.algashop.ordering.domain.model.UUIDGenerator;
+import com.algaworks.algashop.ordering.domain.model.commons.Email;
 import com.algaworks.algashop.ordering.domain.model.customer.Customer;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerTestDataBuilder;
 import com.algaworks.algashop.ordering.domain.model.customer.repository.Customers;
@@ -17,9 +18,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@Sql(scripts = "/sql/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class OrderQueryServiceIT {
 
     @Autowired
@@ -80,6 +83,7 @@ class OrderQueryServiceIT {
 
         Customer customer2 = CustomerTestDataBuilder.existingCustomer()
                 .id(new CustomerId(UUIDGenerator.generateTimeBasedUUID()))
+                .email(new Email("tecbrunoramos@gmail.com"))
                 .build();
         customers.add(customer2);
         orders.add(OrderTestDataBuilder.anOrder().orderStatus(OrderStatus.PAID).customerId(customer2.id()).build());
@@ -127,7 +131,10 @@ class OrderQueryServiceIT {
         orders.add(OrderTestDataBuilder.anOrder().orderStatus(OrderStatus.DRAFT).withItems(false).customerId(customer1.id()).build());
         orders.add(OrderTestDataBuilder.anOrder().orderStatus(OrderStatus.PLACED).customerId(customer1.id()).build());
 
-        Customer customer2 = CustomerTestDataBuilder.existingCustomer().id(new CustomerId()).build();
+        Customer customer2 = CustomerTestDataBuilder.existingCustomer()
+                .id(new CustomerId())
+                .email(new Email("tecbrunoramos@gmail.com"))
+                .build();
         customers.add(customer2);
         orders.add(OrderTestDataBuilder.anOrder().orderStatus(OrderStatus.PAID).customerId(customer2.id()).build());
         orders.add(OrderTestDataBuilder.anOrder().orderStatus(OrderStatus.READY).customerId(customer2.id()).build());

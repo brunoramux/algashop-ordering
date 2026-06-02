@@ -1,5 +1,6 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.provider;
 
+import com.algaworks.algashop.ordering.domain.model.commons.Email;
 import com.algaworks.algashop.ordering.domain.model.customer.Customer;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerTestDataBuilder;
 import com.algaworks.algashop.ordering.domain.model.shoppingcart.ShoppingCart;
@@ -17,8 +18,10 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
         CustomerPersistenceEntityDisassembler.class,
         SpringDataAuditingConfig.class
 })
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Sql(scripts = "/sql/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class ShoppingCartPersistenceProviderIT {
 
     private ShoppingCartPersistenceProvider persistenceProvider;
@@ -116,7 +121,10 @@ class ShoppingCartPersistenceProviderIT {
         ShoppingCart cart1 = ShoppingCartTestDataBuilder.aShoppingCart().build();
         persistenceProvider.add(cart1);
 
-        Customer otherCustomer = CustomerTestDataBuilder.existingCustomer().id(new CustomerId()).build();
+        Customer otherCustomer = CustomerTestDataBuilder.existingCustomer()
+                .id(new CustomerId())
+                .email(new Email("other.customer@email.com"))
+                .build();
         customersPersistenceProvider.add(otherCustomer);
 
         ShoppingCart cart2 = ShoppingCartTestDataBuilder.aShoppingCart().customerId(otherCustomer.id()).build();

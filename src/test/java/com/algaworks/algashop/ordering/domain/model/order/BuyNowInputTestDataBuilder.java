@@ -38,7 +38,7 @@ public class BuyNowInputTestDataBuilder {
                         .lastName("Damon")
                         .phone("123-321-1112")
                         .document("123-45-6789")
-                        .email("matt.damon@email.com")
+                        .email("johndoe@email.com")
                         .address(AddressData.builder()
                                 .street("Amphitheatre Parkway")
                                 .number("1600")

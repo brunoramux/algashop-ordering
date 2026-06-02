@@ -9,13 +9,17 @@ import com.algaworks.algashop.ordering.infrastructure.persistence.customer.Custo
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDate;
 
 @DataJpaTest
 @Import({CustomerPersistenceEntityAssembler.class, CustomerPersistenceEntityDisassembler.class, CustomersPersistenceProvider.class})
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Sql(scripts = "/sql/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class CustomersPersistenceProviderIT {
 
     private final CustomersPersistenceProvider provider;
