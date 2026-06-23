@@ -35,9 +35,14 @@ public class CustomersPersistenceProvider implements Customers {
         return persistenceEntity.map(disassembler::toDomainEntity);
     }
 
-    // RETORNA DTO DE OUTPUT DIRETAMENTE USANDO QUERY JPQL. IMPLEMENTAÇÃO DE CUSTOMER PERSISTENCEENTITYQUERIES. REPOSITÓRIO EXTENDE.
+    // RETORNA DTO DE OUTPUT DIRETAMENTE USANDO QUERY JPQL. IMPLEMENTAO DE CUSTOMER PERSISTENCEENTITYQUERIES. REPOSITRIO EXTENDE.
     public CustomerOutput findById(UUID customerId){
         return repository.findByIdAsOutput(customerId).orElseThrow(CustomerNotFoundException::new);
+    }
+
+    // Versão equivalente utilizando SQL nativa
+    public CustomerOutput findByIdNative(UUID customerId) {
+        return repository.findByIdAsOutputNative(customerId).orElseThrow(CustomerNotFoundException::new);
     }
 
     @Override

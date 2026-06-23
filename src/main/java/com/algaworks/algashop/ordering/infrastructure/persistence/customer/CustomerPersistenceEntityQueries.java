@@ -9,4 +9,7 @@ public interface CustomerPersistenceEntityQueries {
 
     Optional<CustomerOutput> findByIdAsOutput(UUID customerId);
 
+    // Versão equivalente utilizando SQL nativa
+    Optional<CustomerOutput> findByIdAsOutputNative(UUID customerId);
+
 }

@@ -74,7 +74,6 @@ public class OrdersPersistenceProvider implements Orders {
 
     @Override
     public List<Order> placedByCustomerInYear(CustomerId customerId, Year year) {
-
         List<OrderPersistenceEntity> entity = repository.placedByCustomerInYear(customerId.value(), year.getValue());
         return entity.stream().map(disassembler::toDomainEntity).collect(Collectors.toList());
     }
@@ -87,6 +86,23 @@ public class OrdersPersistenceProvider implements Orders {
     @Override
     public Money totalSoldForCustomer(CustomerId customerId) {
         return new Money(repository.totalSoldForCustomer(customerId.value()));
+    }
+
+    // ============================================================
+    // SQL NATIVA - implementações equivalentes
+    // ============================================================
+
+    public List<Order> placedByCustomerInYearNative(CustomerId customerId, Year year) {
+        List<OrderPersistenceEntity> entities = repository.placedByCustomerInYearNative(customerId.value(), year.getValue());
+        return entities.stream().map(disassembler::toDomainEntity).collect(Collectors.toList());
+    }
+
+    public long selectQuantityByCustomerInYearNative(CustomerId customerId, Year year) {
+        return repository.selectQuantityByCustomerInYearNative(customerId.value(), year.getValue());
+    }
+
+    public Money totalSoldForCustomerNative(CustomerId customerId) {
+        return new Money(repository.totalSoldForCustomerNative(customerId.value()));
     }
 
     @SneakyThrows

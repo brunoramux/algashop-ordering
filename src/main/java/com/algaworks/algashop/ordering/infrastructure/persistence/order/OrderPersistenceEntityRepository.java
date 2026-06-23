@@ -12,7 +12,11 @@ import java.util.UUID;
 
 public interface OrderPersistenceEntityRepository extends JpaRepository<OrderPersistenceEntity, Long> {
 
-    @Query(""" 
+    // ============================================================
+    // JPQL - implementações originais
+    // ============================================================
+
+    @Query("""
         SELECT o
         FROM OrderPersistenceEntity o
         WHERE o.customer.id = :customerId
@@ -38,12 +42,43 @@ public interface OrderPersistenceEntityRepository extends JpaRepository<OrderPer
                 AND o.canceledAt IS NULL
                     AND o.paidAt IS NOT NULL
     """)
-   BigDecimal totalSoldForCustomer(@Param("customerId") UUID customerId);
-
+    BigDecimal totalSoldForCustomer(@Param("customerId") UUID customerId);
 
     // SOBRESCREVE METODO DO JPA SOLICITANDO QUE TRAGA TODOS OS ITENS E CUSTOMER DO PEDIDO DE UMA VEZ
     @Override
     @EntityGraph(attributePaths = {"customer", "items"})
     Optional<OrderPersistenceEntity> findById(Long id);
+
+    // ============================================================
+    // SQL NATIVA - implementações equivalentes
+    // ============================================================
+
+    @Query(value = """
+        SELECT o.*
+        FROM "order" o
+        WHERE o.customer_id = :customerId
+          AND EXTRACT(YEAR FROM o.placed_at) = :year
+        """, nativeQuery = true)
+    List<OrderPersistenceEntity> placedByCustomerInYearNative(
+            @Param("customerId") UUID customerId,
+            @Param("year") Integer year);
+
+    @Query(value = """
+        SELECT COUNT(o.id)
+        FROM "order" o
+        WHERE o.customer_id = :customerId
+          AND EXTRACT(YEAR FROM o.placed_at) = :year
+        """, nativeQuery = true)
+    long selectQuantityByCustomerInYearNative(@Param("customerId") UUID customerId,
+                                              @Param("year") Integer year);
+
+    @Query(value = """
+        SELECT COALESCE(SUM(o.total_amount), 0)
+        FROM "order" o
+        WHERE o.customer_id = :customerId
+          AND o.canceled_at IS NULL
+          AND o.paid_at IS NOT NULL
+        """, nativeQuery = true)
+    BigDecimal totalSoldForCustomerNative(@Param("customerId") UUID customerId);
 
 }
