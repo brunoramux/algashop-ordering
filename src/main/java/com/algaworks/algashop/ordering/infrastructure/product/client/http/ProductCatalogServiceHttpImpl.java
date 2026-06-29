@@ -9,6 +9,7 @@ import com.algaworks.algashop.ordering.domain.model.product.valueobject.ProductN
 import com.algaworks.algashop.ordering.infrastructure.exceptionhandler.BadGatewayException;
 import com.algaworks.algashop.ordering.infrastructure.exceptionhandler.GatewayTimeoutException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
@@ -21,6 +22,12 @@ public class ProductCatalogServiceHttpImpl implements ProductCatalogService {
 
     private final ProductCatalogAPIClient productCatalogAPIClient;
 
+    @Retryable(
+            maxRetries = 3,
+            delayString = "3s",
+            multiplier = 2,
+            includes = {GatewayTimeoutException.class, BadGatewayException.class}
+    )
     @Override
     public Optional<Product> ofId(ProductId productId) {
         ProductResponse productResponse;
