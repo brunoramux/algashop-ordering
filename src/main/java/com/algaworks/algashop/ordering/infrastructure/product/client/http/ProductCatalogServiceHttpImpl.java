@@ -9,6 +9,7 @@ import com.algaworks.algashop.ordering.domain.model.product.valueobject.ProductN
 import com.algaworks.algashop.ordering.infrastructure.exceptionhandler.BadGatewayException;
 import com.algaworks.algashop.ordering.infrastructure.exceptionhandler.GatewayTimeoutException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.resilience.annotation.ConcurrencyLimit;
 import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ import org.springframework.web.client.ResourceAccessException;
 import java.util.Optional;
 
 @Component
+@ConditionalOnProperty(name = "algashop.integrations.product-catalog.provider", havingValue = "HTTP", matchIfMissing = true)
 @RequiredArgsConstructor
 public class ProductCatalogServiceHttpImpl implements ProductCatalogService {
 

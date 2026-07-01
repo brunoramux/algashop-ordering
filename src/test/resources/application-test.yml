@@ -19,4 +19,5 @@ algashop:
     rapidex:
       url: "http://localhost:8780"
     product-catalog:
+      provider: "FAKE"
       url: http://localhost:8083
