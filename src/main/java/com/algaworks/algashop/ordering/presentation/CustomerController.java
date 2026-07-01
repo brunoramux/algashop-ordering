@@ -1,6 +1,7 @@
 package com.algaworks.algashop.ordering.presentation;
 
 import com.algaworks.algashop.ordering.application.customer.*;
+import com.algaworks.algashop.ordering.infrastructure.config.security.SecurityAnnotations;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class CustomerController {
     private final CustomerManagementApplicationService customerManagementApplicationService;
     private final CustomerQueryService customerQueryService;
 
+    @SecurityAnnotations.CanWriteCustomers
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CustomerOutput create(@RequestBody @Valid CustomerInput input, HttpServletResponse httpServletResponse) {
@@ -32,14 +34,23 @@ public class CustomerController {
         return customerManagementApplicationService.findById(customerId);
     }
 
+    @SecurityAnnotations.CanReadCustomers
     @GetMapping
     public PageModel<CustomerSummaryOutput> findAll(CustomerFilter customerFilter){
         return PageModel.of(customerQueryService.filter(customerFilter));
     }
 
+    @SecurityAnnotations.CanReadCustomers
     @GetMapping("/{customerId}")
     public CustomerOutput findById(@PathVariable UUID customerId){
         return customerQueryService.findById(customerId);
+    }
+
+    @SecurityAnnotations.CanWriteCustomers
+    @DeleteMapping("/{customerId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID customerId) {
+        customerManagementApplicationService.archive(customerId);
     }
 }
 
