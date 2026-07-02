@@ -1,6 +1,8 @@
 package com.algaworks.algashop.ordering.presentation;
 
 import com.algaworks.algashop.ordering.domain.model.customer.exception.CustomerEmailIsInUseException;
+import com.algaworks.algashop.ordering.domain.model.customer.exception.CustomerNotFoundException;
+import com.algaworks.algashop.ordering.domain.model.product.exception.ProductNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -60,5 +62,29 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
 
         return handleExceptionInternal(ex, problemDetail, new HttpHeaders(), HttpStatus.CONFLICT, request);
+    }
+
+    @ExceptionHandler(CustomerNotFoundException.class)
+    protected ResponseEntity<Object> handleCustomerNotFound(CustomerNotFoundException ex, WebRequest request) {
+
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        problemDetail.setTitle("Customer not found");
+        problemDetail.setDetail("Customer not found.");
+        problemDetail.setType(URI.create("/errors/customer-not-found"));
+
+
+        return handleExceptionInternal(ex, problemDetail, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    protected ResponseEntity<Object> handleProductNotFound(ProductNotFoundException ex, WebRequest request) {
+
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        problemDetail.setTitle("Product not found");
+        problemDetail.setDetail("Product not found.");
+        problemDetail.setType(URI.create("/errors/product-not-found"));
+
+
+        return handleExceptionInternal(ex, problemDetail, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 }
