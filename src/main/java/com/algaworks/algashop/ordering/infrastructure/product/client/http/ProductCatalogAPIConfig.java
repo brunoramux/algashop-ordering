@@ -1,10 +1,14 @@
 package com.algaworks.algashop.ordering.infrastructure.product.client.http;
 
+import jakarta.validation.constraints.NotBlank;
+import org.jspecify.annotations.Nullable;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.client.OAuth2ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestClient;
@@ -12,6 +16,8 @@ import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 import java.time.Duration;
+import java.util.Collection;
+import java.util.Collections;
 
 @Configuration
 @ConditionalOnProperty(name = "algashop.integrations.product-catalog.provider", havingValue = "HTTP", matchIfMissing = true)
@@ -26,6 +32,7 @@ public class ProductCatalogAPIConfig {
 
         var interceptor = new OAuth2ClientHttpRequestInterceptor(manager);
         interceptor.setClientRegistrationIdResolver(request -> properties.getOauth2ClientRegistrationId());
+        interceptor.setPrincipalResolver(_ -> generatePrincipal(properties.getOauth2ClientRegistrationId()));
 
         RestClient restClient = builder.baseUrl(properties.getUrl())
                 .requestFactory(generateClientHttpRequestFactory())
@@ -34,6 +41,20 @@ public class ProductCatalogAPIConfig {
         RestClientAdapter adapter = RestClientAdapter.create(restClient);
         HttpServiceProxyFactory proxyFactory = HttpServiceProxyFactory.builderFor(adapter).build();
         return proxyFactory.createClient(ProductCatalogAPIClient.class);
+    }
+
+    private Authentication generatePrincipal(String principalName) {
+        return new AbstractAuthenticationToken(Collections.emptySet()) {
+            @Override
+            public @Nullable Object getCredentials() {
+                return null;
+            }
+
+            @Override
+            public @Nullable Object getPrincipal() {
+                return principalName;
+            }
+        };
     }
 
     private ClientHttpRequestFactory generateClientHttpRequestFactory() {
